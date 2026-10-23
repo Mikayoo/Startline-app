@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Chip, IconName, PillButton, Txt } from '@/components/ui';
+import { Chip, IconButton, IconName, PillButton, Txt } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 import { palette, space } from '@/theme/tokens';
 
@@ -27,6 +27,11 @@ export default function Welcome() {
         locations={[0, 0.3, 0.55, 0.8]}
         style={StyleSheet.absoluteFill}
       />
+      {router.canGoBack() ? (
+        <View style={{ position: 'absolute', top: insets.top + space[2], left: space[6], zIndex: 2 }}>
+          <IconButton icon="arrow-left" label="Back" onMedia onPress={() => router.back()} />
+        </View>
+      ) : null}
       <ScrollView
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 220, paddingBottom: insets.bottom + space[6] }]}
       >
@@ -38,7 +43,7 @@ export default function Welcome() {
           Start with what matters to you
         </Txt>
         <Txt variant="bodyLarge" style={styles.lead}>
-          Answer 5 short questions. We'll build a plan around what matters to you.
+          Answer 4 short questions. We'll build a plan around what matters to you.
         </Txt>
         <View style={{ gap: space[3], marginTop: space[2] }}>
           {PROMISES.map((p) => (
@@ -57,7 +62,7 @@ export default function Welcome() {
         </Txt>
         <PillButton tone="inverse" label="Build my plan" arrow onPress={() => {
             markIntroSeen();
-            router.push('/onboarding/language');
+            router.push('/onboarding/status');
           }}
         />
         <PillButton

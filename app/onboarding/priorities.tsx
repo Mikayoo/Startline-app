@@ -13,8 +13,8 @@ export default function Priorities() {
   const count = profile.priorities.length;
   return (
     <QuestionScreen
-      step={5}
-      total={5}
+      step={4}
+      total={4}
       title="What matters most right now?"
       helper={`Pick up to ${MAX_PRIORITIES}. We'll put these first in your plan.`}
       footer={

@@ -8,17 +8,27 @@ import {
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { Splash } from '@/components/Splash';
 import { AppStateProvider, useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
+const SPLASH_MS = 1200;
+
 function Navigator() {
   const { ready } = useApp();
-  if (!ready) return <View style={{ flex: 1, backgroundColor: color.surfaceWarm }} />;
+  const [splashDone, setSplashDone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSplashDone(true), SPLASH_MS);
+    return () => clearTimeout(t);
+  }, []);
+  if (!ready || !splashDone) return <Splash />;
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.surfaceWarm } }}>
+      <Stack.Screen name="intro" />
       <Stack.Screen name="welcome" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="referral" options={{ presentation: 'modal' }} />

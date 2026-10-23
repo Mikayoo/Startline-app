@@ -12,18 +12,18 @@ export default function Household() {
   return (
     <QuestionScreen
       step={3}
-      total={5}
+      total={4}
       title="Who is with you in Canada?"
       helper="This helps us add steps like school registration. We don't ask for names."
       footer={
         <>
-          <FooterButton label="Continue" arrow disabled={!profile.household} onPress={() => router.push('/onboarding/status')} />
+          <FooterButton label="Continue" arrow disabled={!profile.household} onPress={() => router.push('/onboarding/priorities')} />
           <FooterButton
             tone="ghost"
             label="Skip this question"
             onPress={() => {
               update({ household: null });
-              router.push('/onboarding/status');
+              router.push('/onboarding/priorities');
             }}
           />
         </>

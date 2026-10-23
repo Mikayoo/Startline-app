@@ -11,19 +11,19 @@ export default function StatusQuestion() {
   const { profile, update } = useApp();
   return (
     <QuestionScreen
-      step={4}
-      total={5}
+      step={1}
+      total={4}
       title="Which describes you best?"
       helper="Optional. Some steps depend on your immigration status. You can skip this and see general steps."
       footer={
         <>
-          <FooterButton label="Continue" arrow disabled={!profile.status} onPress={() => router.push('/onboarding/priorities')} />
+          <FooterButton label="Continue" arrow disabled={!profile.status} onPress={() => router.push('/onboarding/place')} />
           <FooterButton
             tone="ghost"
             label="Skip this question"
             onPress={() => {
               update({ status: null });
-              router.push('/onboarding/priorities');
+              router.push('/onboarding/place');
             }}
           />
         </>

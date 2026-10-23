@@ -7,7 +7,7 @@ import { color } from '@/theme/tokens';
 
 export default function TabsLayout() {
   const { introSeen } = useApp();
-  if (!introSeen) return <Redirect href="/welcome" />;
+  if (!introSeen) return <Redirect href="/intro" />;
   return (
     <Tabs
       tabBar={(props) => <PillTabBar {...props} />}

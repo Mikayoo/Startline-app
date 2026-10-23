@@ -12,7 +12,7 @@ export default function Place() {
   return (
     <QuestionScreen
       step={2}
-      total={5}
+      total={4}
       title="Where are you living now?"
       helper="Local services are different in each city. We only use this to show the right ones."
       footer={

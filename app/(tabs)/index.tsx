@@ -84,8 +84,8 @@ export default function Home() {
       {!hasAnswers ? (
         <Card style={{ gap: space[3] }}>
           <Txt variant="cardTitle">Get a plan made for you</Txt>
-          <Txt style={{ color: color.textSecondary }}>You're seeing general steps. Answer 5 short questions to put your priorities first.</Txt>
-          <PillButton label="Build my plan" arrow onPress={() => router.push('/onboarding/language')} />
+          <Txt style={{ color: color.textSecondary }}>You're seeing general steps. Answer 4 short questions to put your priorities first.</Txt>
+          <PillButton label="Build my plan" arrow onPress={() => router.push('/onboarding/status')} />
         </Card>
       ) : null}
 
