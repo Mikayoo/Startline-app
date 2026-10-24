@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Chip, IconButton, IconName, PillButton, Txt } from '@/components/ui';
@@ -65,14 +65,35 @@ export default function Welcome() {
             router.push('/onboarding/status');
           }}
         />
-        <PillButton
-          tone="ghostInverse"
-          label="Browse support first"
-          onPress={() => {
-            markIntroSeen();
-            router.replace('/');
-          }}
-        />
+        <View style={styles.links}>
+          <Pressable
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={() => {
+              markIntroSeen();
+              router.replace('/');
+            }}
+          >
+            <Txt variant="button" style={{ color: palette.white }}>
+              Browse support first
+            </Txt>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityHint="Accounts are not part of the prototype yet"
+            hitSlop={8}
+            onPress={() =>
+              Alert.alert(
+                'Log in is coming later',
+                'Accounts aren\'t part of the prototype yet. Your plan stays on this phone when you tap "Save my plan".',
+              )
+            }
+          >
+            <Txt variant="button" style={{ color: palette.white }}>
+              Log in
+            </Txt>
+          </Pressable>
+        </View>
         <Txt variant="caption" style={styles.demo}>
           Prototype · sample content for Kitchener-Waterloo
         </Txt>
@@ -96,6 +117,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  links: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: space[2], paddingVertical: space[3] },
   small: { color: 'rgba(255,255,255,0.7)', marginTop: space[2], marginBottom: space[2] },
   demo: { color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginTop: space[1] },
 });
