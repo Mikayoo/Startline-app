@@ -5,6 +5,7 @@ import { View } from 'react-native';
 import { AccountScreen, Field, NoteCard, TextLink } from '@/components/account';
 import { Card, Txt } from '@/components/ui';
 import { municipalityLabel } from '@/logic/plan';
+import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
 
@@ -13,7 +14,7 @@ export default function SavePlan() {
   const { plan, profile, setDraft, savePlan } = useApp();
   const [mode, setMode] = useState<'phone' | 'email'>('phone');
   const [value, setValue] = useState('');
-  const valid = mode === 'phone' ? value.replace(/\D/g, '').length >= 10 : /.+@.+\..+/.test(value);
+  const valid = mode === 'phone' ? isValidPhone(value) : isValidEmail(value);
 
   return (
     <AccountScreen
@@ -39,12 +40,17 @@ export default function SavePlan() {
         </Txt>
       </Card>
       {mode === 'phone' ? (
-        <Field label="Mobile number" prefix="CA +1" value={value} onChangeText={setValue} placeholder="(519) 555-0142" keyboardType="phone-pad" autoComplete="tel" />
+        <Field label="Mobile number" prefix="CA +1" value={value} onChangeText={(v) => setValue(formatPhone(v))} placeholder="(519) 555-0142" keyboardType="phone-pad" autoComplete="tel" />
       ) : (
         <Field label="Email" value={value} onChangeText={setValue} placeholder="you@example.com" keyboardType="email-address" autoComplete="email" />
       )}
+      {mode === 'phone' && phoneDigits(value).length === 10 && !valid ? (
+        <Txt variant="caption" style={{ color: color.error }} accessibilityLiveRegion="polite">
+          Check the number. Canadian area codes and numbers don't start with 0 or 1.
+        </Txt>
+      ) : null}
       <Txt variant="caption" style={{ color: color.textSecondary }}>
-        No Canadian number yet? Use any number, or your email.
+        No Canadian number yet? Use your email instead.
       </Txt>
       <Card style={{ gap: space[2] }}>
         <Txt variant="cardTitle">Before you continue</Txt>

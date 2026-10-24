@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { AccountScreen, Field, NoteCard, TextLink } from '@/components/account';
 import { Txt } from '@/components/ui';
+import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
@@ -11,7 +12,7 @@ export default function Login() {
   const { setDraft } = useApp();
   const [mode, setMode] = useState<'phone' | 'email'>('phone');
   const [value, setValue] = useState('');
-  const valid = mode === 'phone' ? value.replace(/\D/g, '').length >= 10 : /.+@.+\..+/.test(value);
+  const valid = mode === 'phone' ? isValidPhone(value) : isValidEmail(value);
 
   return (
     <AccountScreen
@@ -29,10 +30,15 @@ export default function Login() {
       secondary={{ label: mode === 'phone' ? 'Continue with email' : 'Continue with phone', onPress: () => { setMode(mode === 'phone' ? 'email' : 'phone'); setValue(''); } }}
     >
       {mode === 'phone' ? (
-        <Field label="Mobile number" prefix="CA +1" value={value} onChangeText={setValue} placeholder="(519) 555-0142" keyboardType="phone-pad" autoComplete="tel" autoFocus />
+        <Field label="Mobile number" prefix="CA +1" value={value} onChangeText={(v) => setValue(formatPhone(v))} placeholder="(519) 555-0142" keyboardType="phone-pad" autoComplete="tel" autoFocus />
       ) : (
         <Field label="Email" value={value} onChangeText={setValue} placeholder="you@example.com" keyboardType="email-address" autoComplete="email" autoFocus />
       )}
+      {mode === 'phone' && phoneDigits(value).length === 10 && !valid ? (
+        <Txt variant="caption" style={{ color: color.error }} accessibilityLiveRegion="polite">
+          Check the number. Canadian area codes and numbers don't start with 0 or 1.
+        </Txt>
+      ) : null}
       {mode === 'phone' ? (
         <Txt variant="caption" style={{ color: color.textSecondary }}>
           Lost access to this number? You can sign in with your email instead.
