@@ -96,10 +96,12 @@ export function Chip({
   label,
   icon,
   tone = 'brand',
+  style,
 }: {
   label: string;
   icon?: IconName;
   tone?: 'brand' | 'media' | 'warning' | 'neutral' | 'solid';
+  style?: StyleProp<ViewStyle>;
 }) {
   const t = {
     brand: { bg: color.brandSubtle, fg: color.textBrand, border: 'transparent' },
@@ -109,7 +111,7 @@ export function Chip({
     solid: { bg: color.actionPrimary, fg: palette.white, border: 'transparent' },
   }[tone];
   return (
-    <View style={[styles.chip, { backgroundColor: t.bg, borderColor: t.border }]}>
+    <View style={[styles.chip, { backgroundColor: t.bg, borderColor: t.border }, style]}>
       {icon ? <Feather name={icon} size={12} color={t.fg} /> : null}
       <Txt variant="label" style={{ color: t.fg }}>
         {label}

@@ -32,7 +32,7 @@ export function StepCard({
       <IconTile icon={done ? 'check' : STEP_ICON[step.category]} tint={done ? color.successSubtle : color.brandSubtle} />
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'center' }}>
-          {highlight && !done ? <Chip tone="solid" label="Start here" /> : <Chip tone={done ? 'neutral' : 'brand'} label={done ? 'Done' : `Step ${index + 1}`} />}
+          {highlight && !done ? <Chip tone="solid" label="Start here" style={{ alignSelf: 'center' }} /> : <Chip tone={done ? 'neutral' : 'brand'} label={done ? 'Done' : `Step ${index + 1}`} style={{ alignSelf: 'center' }} />}
           <Txt variant="caption" style={{ color: color.textSecondary }}>
             {step.categoryLabel}
           </Txt>

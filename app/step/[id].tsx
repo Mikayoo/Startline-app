@@ -43,7 +43,7 @@ export default function StepDetail() {
               <View style={styles.heroIcon}>
                 <Feather name={STEP_ICON[step.category]} size={18} color={palette.white} />
               </View>
-              <Chip tone="media" label={step.categoryLabel} />
+              <Chip tone="media" label={step.categoryLabel} style={{ alignSelf: 'center' }} />
             </View>
             <Txt variant="display" style={{ color: palette.white, fontSize: 30, lineHeight: 36 }} accessibilityRole="header">
               {step.title}
