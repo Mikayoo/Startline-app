@@ -6,8 +6,9 @@ import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
 export default function TabsLayout() {
-  const { introSeen } = useApp();
+  const { introSeen, account, unlocked } = useApp();
   if (!introSeen) return <Redirect href="/intro" />;
+  if (account && !unlocked) return <Redirect href="/account/unlock" />;
   return (
     <Tabs
       tabBar={(props) => <PillTabBar {...props} />}

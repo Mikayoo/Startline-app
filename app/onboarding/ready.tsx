@@ -11,7 +11,7 @@ import { color, palette, radius, shadow, space } from '@/theme/tokens';
 
 export default function PlanReady() {
   const insets = useSafeAreaInsets();
-  const { plan, profile, done, saved, savePlan } = useApp();
+  const { plan, profile, done, saved } = useApp();
   const now = plan.steps.filter((s) => s.stage === 'now');
   const place = municipalityLabel(profile.municipality);
   const first = now[0];
@@ -37,7 +37,7 @@ export default function PlanReady() {
           <SectionHeader
             title="Your next steps"
             action={saved ? 'Saved on this phone' : 'Save my plan'}
-            onAction={saved ? undefined : () => savePlan()}
+            onAction={saved ? undefined : () => router.push('/account/save')}
           />
           <View style={{ gap: space[3] }}>
             {now.map((item, i) => (

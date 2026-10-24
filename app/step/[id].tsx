@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SourceCard, STEP_ICON, StickyFooter } from '@/components/layout';
+import { InfoCard } from '@/components/InfoCard';
 import { Card, Chip, DemoNotice, IconButton, Meta, PillButton, Txt } from '@/components/ui';
 import { getSource } from '@/content/sources';
 import { STEPS } from '@/content/steps';
@@ -100,6 +101,26 @@ export default function StepDetail() {
                 <Txt style={{ flex: 1 }}>{a}</Txt>
               </View>
             ))}
+          </Section>
+
+          <Section title="Before you contact a service">
+            <InfoCard
+              icon="message-square"
+              title="Questions to ask"
+              sub="Who can use it, cost, what to bring"
+              points={['Can someone in my situation use this service?', 'Is there any cost?', 'What should I bring to a first visit?', 'Can I get help in my language?', 'How long is the wait right now?']}
+            />
+            <InfoCard
+              icon="check-circle"
+              title="Before you hang up"
+              sub="Ask for the next step"
+              points={['Write down the name of the person you spoke to.', 'Ask for a reference number, if there is one.', 'Ask what happens next, and when.', 'Ask how they will contact you.']}
+            />
+            <InfoCard
+              icon="lock"
+              title="Keep private details private"
+              text="You don't need to share your UCI, case number or full address on a first call. Share them only if the service asks and you trust it."
+            />
           </Section>
 
           <Section title="Sources">

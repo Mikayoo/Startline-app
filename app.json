@@ -27,7 +27,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Startline uses Face ID to unlock your plan on this phone."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false

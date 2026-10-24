@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Chip, IconButton, IconName, PillButton, Txt } from '@/components/ui';
@@ -80,14 +80,8 @@ export default function Welcome() {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            accessibilityHint="Accounts are not part of the prototype yet"
             hitSlop={8}
-            onPress={() =>
-              Alert.alert(
-                'Log in is coming later',
-                'Accounts aren\'t part of the prototype yet. Your plan stays on this phone when you tap "Save my plan".',
-              )
-            }
+            onPress={() => router.push('/account/login')}
           >
             <Txt variant="button" style={{ color: palette.white }}>
               Log in

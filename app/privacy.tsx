@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { maskContact } from '@/components/account';
 import { Card, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
@@ -18,7 +19,7 @@ const STORED: [string, string][] = [
 
 export default function Privacy() {
   const insets = useSafeAreaInsets();
-  const { saved, savePlan, deleteData } = useApp();
+  const { saved, savePlan, deleteData, account, signOut } = useApp();
   const [deleted, setDeleted] = useState(false);
 
   return (
@@ -33,6 +34,35 @@ export default function Privacy() {
           : 'Your answers are only kept while the app is open. Save your plan to keep it on this phone.'}
       </Txt>
       <Card style={{ gap: space[3] }}>
+        <Txt variant="cardTitle">Your account</Txt>
+        {account ? (
+          <>
+            <View style={{ gap: 2 }}>
+              <Txt variant="label">{account.name ?? 'No name added'}</Txt>
+              <Txt variant="caption" style={{ color: color.textSecondary }}>
+                {maskContact(account.contact)} · {account.faceId ? 'Face ID on' : 'Passcode only'}
+              </Txt>
+            </View>
+            <View style={{ gap: 2 }}>
+              <Txt variant="label">Documents</Txt>
+              <Txt variant="caption" style={{ color: color.textSecondary }}>
+                {account.documents.length ? `${account.documents.length} saved on this phone` : 'None added. Only asked when a step needs it.'}
+              </Txt>
+            </View>
+            <PillButton tone="secondary" label="Add a document" onPress={() => router.push('/account/documents')} />
+            <PillButton tone="ghost" label="Sign out on this phone" onPress={() => signOut()} />
+          </>
+        ) : (
+          <>
+            <Txt variant="caption" style={{ color: color.textSecondary }}>
+              No account. An account keeps your plan safe if you change phones, and adds a passcode.
+            </Txt>
+            <PillButton tone="secondary" label="Create an account" onPress={() => router.push('/account/save')} />
+            <PillButton tone="ghost" label="Log in" onPress={() => router.push('/account/login')} />
+          </>
+        )}
+      </Card>
+      <Card style={{ gap: space[3] }}>
         <Txt variant="cardTitle">What Startline keeps, and why</Txt>
         {STORED.map(([k, v]) => (
           <View key={k} style={{ gap: 2 }}>
@@ -43,7 +73,7 @@ export default function Privacy() {
           </View>
         ))}
         <Txt variant="caption" style={{ color: color.textSecondary }}>
-          Startline never asks for your name in the plan, your documents, your address or your case number.
+          Startline never asks for your address or your case number. Your name and documents are optional, and stay on this phone.
         </Txt>
       </Card>
       {!saved ? <PillButton label="Save my plan on this phone" onPress={() => savePlan()} /> : null}

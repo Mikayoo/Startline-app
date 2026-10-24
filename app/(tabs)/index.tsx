@@ -19,7 +19,7 @@ const QUICK: { icon: IconName; label: string; href: '/(tabs)/path' | '/(tabs)/as
 
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const { plan, profile, done } = useApp();
+  const { plan, profile, done, account } = useApp();
   const place = municipalityLabel(profile.municipality);
   const hasAnswers = profile.priorities.length > 0;
   const remaining = plan.steps.filter((s) => !done.has(s.step.id));
@@ -32,7 +32,7 @@ export default function Home() {
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
           <Txt variant="caption" style={{ color: color.textSecondary }}>
-            {place}
+            {account?.name ? `Hi ${account.name} · ${place}` : place}
           </Txt>
           <Txt variant="screenHeading" accessibilityRole="header">
             Your next chapter
