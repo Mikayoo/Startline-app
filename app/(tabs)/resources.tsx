@@ -126,5 +126,5 @@ const styles = StyleSheet.create({
   topicOn: { backgroundColor: color.actionPrimary },
   featured: { backgroundColor: color.surface, borderRadius: radius.card, overflow: 'hidden', ...shadow.card },
   featuredPhoto: { width: '100%', height: 170 },
-  badge: { width: 44, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },
+  badge: { minWidth: 44, paddingHorizontal: 6, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },
 });

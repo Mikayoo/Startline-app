@@ -159,8 +159,8 @@ export const STATUS_OPTIONS: { id: Status; label: string; helper: string }[] = [
 
 export const HOUSEHOLD_OPTIONS: { id: Household; label: string; icon: string }[] = [
   { id: 'alone', label: 'Just me', icon: 'user' },
-  { id: 'partner', label: 'Me and a partner or adult family', icon: 'users' },
-  { id: 'children', label: 'Me with children', icon: 'smile' },
+  { id: 'partner', label: 'Me and a partner or adult family', icon: 'user-plus' },
+  { id: 'children', label: 'Me with children', icon: 'users' },
 ];
 
 export const MUNICIPALITY_OPTIONS: { id: Municipality; label: string }[] = [

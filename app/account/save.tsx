@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { AccountScreen, Field, NoteCard, TextLink } from '@/components/account';
-import { Card, Txt } from '@/components/ui';
+import { AccountScreen, Field, TextLink } from '@/components/account';
+import { Card, DemoNotice, Txt } from '@/components/ui';
 import { municipalityLabel } from '@/logic/plan';
 import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { useApp } from '@/state/AppState';
@@ -24,6 +24,7 @@ export default function SavePlan() {
       primary={{
         label: 'Continue',
         disabled: !valid,
+        hint: mode === 'phone' ? 'Enter a 10-digit mobile number.' : 'Enter your email address.',
         onPress: () => {
           setDraft({ contact: { kind: mode, value: value.trim() } });
           router.push(mode === 'phone' ? '/account/verify?flow=create' : '/account/email?flow=create');
@@ -58,9 +59,7 @@ export default function SavePlan() {
           Your account only stores your plan, reminders and saved contacts. Startline never shares them with IRCC or any government office.
         </Txt>
       </Card>
-      <NoteCard icon="alert-circle" tone="warning">
-        Prototype: your account is kept on this phone only. No text or email is sent.
-      </NoteCard>
+      <DemoNotice text="Prototype: your account is kept on this phone only. No text or email is sent." />
       <View style={{ alignItems: 'center' }}>
         <TextLink
           label="Save on this phone only, without an account"

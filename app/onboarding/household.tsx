@@ -20,7 +20,7 @@ export default function Household() {
       helper="This helps us add steps like school registration. We don't ask for names."
       footer={
         <>
-          <FooterButton label="Continue" arrow disabled={!profile.household} onPress={() => go('/onboarding/priorities')} />
+          <FooterButton label="Continue" arrow hint="Choose one to continue, or skip this question." disabled={!profile.household} onPress={() => go('/onboarding/priorities')} />
           <FooterButton
             tone="ghost"
             label="Skip this question"

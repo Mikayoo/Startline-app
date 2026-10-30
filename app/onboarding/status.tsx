@@ -20,7 +20,7 @@ export default function StatusQuestion() {
       helper="Optional. Some steps depend on your immigration status. You can skip this and see general steps."
       footer={
         <>
-          <FooterButton label="Continue" arrow disabled={!profile.status} onPress={() => go('/onboarding/place')} />
+          <FooterButton label="Continue" arrow hint="Choose one to continue, or skip this question." disabled={!profile.status} onPress={() => go('/onboarding/place')} />
           <FooterButton
             tone="ghost"
             label="Skip this question"

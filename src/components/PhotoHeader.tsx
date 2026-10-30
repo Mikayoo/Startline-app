@@ -9,7 +9,10 @@ import { palette, radius, space } from '@/theme/tokens';
 
 import { IconButton, IconName } from './ui';
 
-// v3.1 photo hero: full-bleed photo, dark gradient for legible text, back
+// v3.1 photo hero. Rule: photos for places, services and support (step,
+// resources, service, help). Personal screens (your plan, profile) use the
+// teal gradient instead, because the content is about you, not a place.
+// Full-bleed photo, dark gradient for legible text, back
 // button, optional action on the right, and a sheet that overlaps the photo.
 export function PhotoHeader({
   photo,
@@ -29,7 +32,7 @@ export function PhotoHeader({
     <View style={{ height: height + insets.top }}>
       <Image source={photo} style={StyleSheet.absoluteFill} contentFit="cover" accessible={false} />
       <LinearGradient
-        colors={['rgba(5,41,37,0.45)', 'rgba(5,41,37,0.05)', 'rgba(5,41,37,0.6)', 'rgba(5,41,37,0.92)']}
+        colors={['rgba(5,41,37,0.7)', 'rgba(5,41,37,0.15)', 'rgba(5,41,37,0.6)', 'rgba(5,41,37,0.94)']}
         locations={[0, 0.3, 0.65, 1]}
         style={StyleSheet.absoluteFill}
       />

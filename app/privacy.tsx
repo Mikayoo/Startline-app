@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { maskContact } from '@/components/account';
+import { maskContact, TextLink } from '@/components/account';
 import { Card, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
@@ -55,10 +55,13 @@ export default function Privacy() {
         ) : (
           <>
             <Txt variant="caption" style={{ color: color.textSecondary }}>
-              No account. An account keeps your plan safe if you change phones, and adds a passcode.
+              Recommended. An account keeps your plan safe if you change phones, and adds a passcode.
             </Txt>
-            <PillButton tone="secondary" label="Create an account" onPress={() => router.push('/account/save')} />
-            <PillButton tone="ghost" label="Log in" onPress={() => router.push('/account/login')} />
+            <PillButton label="Create an account" arrow onPress={() => router.push('/account/save')} />
+            <View style={{ alignItems: 'center', gap: space[3], paddingTop: space[1] }}>
+              <TextLink label="I already have an account" onPress={() => router.push('/account/login')} />
+              {!saved ? <TextLink label="Save on this phone only" onPress={() => savePlan()} /> : null}
+            </View>
           </>
         )}
       </Card>
@@ -76,7 +79,6 @@ export default function Privacy() {
           Startline never asks for your address or your case number. Your name and documents are optional, and stay on this phone.
         </Txt>
       </Card>
-      {!saved ? <PillButton label="Save my plan on this phone" onPress={() => savePlan()} /> : null}
       <PillButton
         tone="ghost"
         label={deleted ? 'Your data was deleted' : 'Delete my data'}

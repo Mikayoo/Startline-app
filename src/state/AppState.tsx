@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Priority } from '@/content/steps';
 import { buildPlan, MAX_PRIORITIES, Plan, Profile } from '@/logic/plan';
@@ -33,10 +33,20 @@ export const emptyProfile: Profile = {
   priorities: [],
 };
 
+// A date the person adds themselves. Not an official deadline unless they
+// copied it from an official letter, which `kind` records.
+export interface DateItem {
+  id: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  kind: 'official' | 'appointment' | 'personal';
+}
+
 interface Saved {
   profile: Profile;
   done: string[];
   services?: string[];
+  dates?: DateItem[];
   savedAt: string;
 }
 
@@ -55,6 +65,9 @@ interface AppState {
   deleteData: () => Promise<void>;
   savedServices: Set<string>;
   toggleService: (id: string) => void;
+  dates: DateItem[];
+  addDate: (d: Omit<DateItem, 'id'>) => void;
+  removeDate: (id: string) => void;
   account: Account | null;
   draft: AccountDraft;
   unlocked: boolean;
@@ -71,6 +84,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [done, setDone] = useState<Set<string>>(new Set());
   const [savedServices, setSavedServices] = useState<Set<string>>(new Set());
+  const [dates, setDates] = useState<DateItem[]>([]);
   const [saved, setSaved] = useState(false);
   const [ready, setReady] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
@@ -86,6 +100,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           setProfile(data.profile);
           setDone(new Set(data.done));
           setSavedServices(new Set(data.services ?? []));
+          setDates(data.dates ?? []);
           setSaved(true);
           setIntroSeen(true);
         }
@@ -100,8 +115,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const plan = useMemo(() => buildPlan(profile), [profile]);
 
+  const datesRef = useRef<DateItem[]>([]);
+  datesRef.current = dates;
   const persist = useCallback(async (p: Profile, d: Set<string>, sv?: Set<string>) => {
-    const data: Saved = { profile: p, done: [...d], services: [...(sv ?? [])], savedAt: new Date().toISOString() };
+    const data: Saved = { profile: p, done: [...d], services: [...(sv ?? [])], dates: datesRef.current, savedAt: new Date().toISOString() };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, []);
 
@@ -151,6 +168,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setProfile(emptyProfile);
     setDone(new Set());
     setSavedServices(new Set());
+    setDates([]);
     setSaved(false);
     setIntroSeen(false);
     setAccount(null);
@@ -159,6 +177,26 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const markIntroSeen = useCallback(() => setIntroSeen(true), []);
+
+  const addDate = useCallback(
+    (d: Omit<DateItem, 'id'>) => {
+      const next = [...datesRef.current, { ...d, id: String(Date.now()) }].sort((a, b) => a.date.localeCompare(b.date));
+      datesRef.current = next;
+      setDates(next);
+      if (saved) persist(profile, done, savedServices).catch(() => {});
+    },
+    [saved, profile, done, savedServices, persist],
+  );
+
+  const removeDate = useCallback(
+    (id: string) => {
+      const next = datesRef.current.filter((d) => d.id !== id);
+      datesRef.current = next;
+      setDates(next);
+      if (saved) persist(profile, done, savedServices).catch(() => {});
+    },
+    [saved, profile, done, savedServices, persist],
+  );
 
   const setDraft = useCallback((patch: AccountDraft) => setDraftState((d) => ({ ...d, ...patch })), []);
 
@@ -203,11 +241,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppState>(
     () => ({
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
-      savedServices, toggleService, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     }),
     [
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
-      savedServices, toggleService, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     ],
   );
 

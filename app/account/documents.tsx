@@ -10,7 +10,7 @@ import { space } from '@/theme/tokens';
 const OPTIONS: { id: DocumentKind | 'none'; title: string; helper: string; icon: 'file-text' | 'globe' | 'help-circle' }[] = [
   { id: 'claimant', title: 'Refugee Protection Claimant Document', helper: 'Often called the brown paper', icon: 'file-text' },
   { id: 'passport', title: 'Passport or other ID', helper: 'From your home country or Canada', icon: 'globe' },
-  { id: 'none', title: "I don't have documents yet", helper: "We'll show you how to get them", icon: 'help-circle' },
+  { id: 'none', title: "I don't have documents yet", helper: 'A settlement worker can help you get them', icon: 'help-circle' },
 ];
 
 // v3.1 "A10 Documents (context)". Only asked when a step needs it.
@@ -22,7 +22,7 @@ export default function Documents() {
       helper="Choose what you have today. You can add more later."
       primary={{
         label: 'Continue',
-        onPress: () => (choice === 'none' ? router.replace('/(tabs)/path') : router.push(`/account/scan-tips?doc=${choice}`)),
+        onPress: () => (choice === 'none' ? router.replace('/help') : router.push(`/account/scan-tips?doc=${choice}`)),
       }}
     >
       <Chip tone="brand" icon="star" label="Only asked when a step needs it" />

@@ -109,8 +109,18 @@ export function StickyFooter({ children }: { children: ReactNode }) {
   return <View style={[styles.footer, { paddingBottom: insets.bottom + space[4] }]}>{children}</View>;
 }
 
-export function FooterButton(props: Parameters<typeof PillButton>[0]) {
-  return <PillButton {...props} style={[{ alignSelf: 'stretch' }, props.style]} />;
+// `hint` explains what is missing while the button is disabled.
+export function FooterButton({ hint, ...props }: Parameters<typeof PillButton>[0] & { hint?: string }) {
+  return (
+    <>
+      {props.disabled && hint ? (
+        <Txt variant="caption" style={{ color: color.textSecondary, textAlign: 'center' }} accessibilityLiveRegion="polite">
+          {hint}
+        </Txt>
+      ) : null}
+      <PillButton {...props} style={[{ alignSelf: 'stretch' }, props.style]} />
+    </>
+  );
 }
 
 const TAB_ICON: Record<string, IconName> = {

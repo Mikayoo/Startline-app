@@ -22,7 +22,7 @@ export default function FaceId() {
 
   return (
     <AccountScreen
-      icon="smile"
+      icon="unlock"
       title={`Unlock with ${label}`}
       helper="Faster than a passcode, and your information stays private on this phone."
       primary={{

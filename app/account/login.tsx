@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 
-import { AccountScreen, Field, NoteCard, TextLink } from '@/components/account';
-import { Txt } from '@/components/ui';
+import { AccountScreen, Field, TextLink } from '@/components/account';
+import { DemoNotice, Txt } from '@/components/ui';
 import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
@@ -22,6 +22,7 @@ export default function Login() {
       primary={{
         label: 'Continue',
         disabled: !valid,
+        hint: mode === 'phone' ? 'Enter a 10-digit mobile number.' : 'Enter your email address.',
         onPress: () => {
           setDraft({ contact: { kind: mode, value: value.trim() } });
           router.push(mode === 'phone' ? '/account/verify?flow=login' : '/account/email?flow=login');
@@ -45,9 +46,7 @@ export default function Login() {
         </Txt>
       ) : null}
       <TextLink label="New to Startline? Create an account" onPress={() => router.replace('/account/save')} />
-      <NoteCard icon="alert-circle" tone="warning">
-        Prototype: there is no server yet, so signing in starts a new account on this phone.
-      </NoteCard>
+      <DemoNotice text="Prototype: there is no server yet, so signing in starts a new account on this phone." />
     </AccountScreen>
   );
 }

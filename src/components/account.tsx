@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import * as Crypto from 'expo-crypto';
 import { router } from 'expo-router';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, TextInputInstance, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -36,7 +36,7 @@ export function AccountScreen({
   title: string;
   helper?: string;
   children?: ReactNode;
-  primary?: { label: string; onPress: () => void; disabled?: boolean };
+  primary?: { label: string; onPress: () => void; disabled?: boolean; hint?: string };
   secondary?: { label: string; onPress: () => void };
   back?: boolean;
   topRight?: { label: string; onPress: () => void };
@@ -71,7 +71,7 @@ export function AccountScreen({
       </ScrollView>
       {primary || secondary ? (
         <StickyFooter>
-          {primary ? <FooterButton label={primary.label} arrow disabled={primary.disabled} onPress={primary.onPress} /> : null}
+          {primary ? <FooterButton label={primary.label} arrow disabled={primary.disabled} hint={primary.hint} onPress={primary.onPress} /> : null}
           {secondary ? (
             <Pressable accessibilityRole="button" onPress={secondary.onPress} hitSlop={8} style={{ alignSelf: 'center', paddingVertical: space[3] }}>
               <Txt variant="button" style={{ color: color.textBrand }}>
@@ -104,6 +104,7 @@ export function Field({
   prefix?: string;
   autoComplete?: 'tel' | 'email' | 'name' | 'off';
 }) {
+  const [focused, setFocused] = useState(false);
   return (
     <View style={{ flexDirection: 'row', gap: space[2] }}>
       {prefix ? (
@@ -111,7 +112,7 @@ export function Field({
           <Txt variant="cardTitle">{prefix}</Txt>
         </View>
       ) : null}
-      <View style={[styles.field, styles.fieldActive, { flex: 1 }]}>
+      <View style={[styles.field, focused && styles.fieldActive, { flex: 1 }]}>
         <Txt variant="caption" style={{ color: color.textSecondary }}>
           {label}
         </Txt>
@@ -125,6 +126,8 @@ export function Field({
           autoFocus={autoFocus}
           autoComplete={autoComplete}
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           style={styles.input}
         />
       </View>

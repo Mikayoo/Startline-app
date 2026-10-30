@@ -25,7 +25,7 @@ export default function Saved() {
       <Txt style={{ color: color.textSecondary }}>Saving a contact doesn't book an appointment or contact the service.</Txt>
       {list.map((s) => (
         <Card key={s.id} onPress={() => router.push(`/service/${s.id}`)} style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
-          <View style={{ width: 44, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ minWidth: 44, paddingHorizontal: 6, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' }}>
             <Txt variant="label" style={{ color: color.textBrand }}>
               {s.short}
             </Txt>

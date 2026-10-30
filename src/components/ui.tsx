@@ -206,10 +206,11 @@ export function Meta({ icon, label, style }: { icon: IconName; label: string; st
 // Visible on every screen that shows sample content, so nobody mistakes the
 // prototype for checked information.
 export function DemoNotice({ text = 'Prototype with sample content. Sources are not yet reviewed by a caseworker.' }: { text?: string }) {
+  // Neutral on purpose: amber is kept for real cautions like "call 911".
   return (
     <View style={styles.demo} accessibilityRole="text">
-      <Feather name="alert-circle" size={14} color={color.warning} />
-      <Txt variant="caption" style={{ color: color.warning, flex: 1 }}>
+      <Feather name="info" size={14} color={color.textSecondary} />
+      <Txt variant="caption" style={{ color: color.textSecondary, flex: 1 }}>
         {text}
       </Txt>
     </View>
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: space[2],
     alignItems: 'flex-start',
-    backgroundColor: color.warningSubtle,
+    backgroundColor: color.surfaceSubtle,
     borderRadius: radius.md,
     padding: space[3],
   },

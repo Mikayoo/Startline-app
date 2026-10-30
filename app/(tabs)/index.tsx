@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card, Chip, DemoNotice, IconButton, IconName, PillButton, SectionHeader, Txt } from '@/components/ui';
 import { PHOTO, stepPhoto } from '@/content/photos';
 import { getSource } from '@/content/sources';
+import { daysUntil, formatDate, whenLabel } from '@/logic/dates';
 import { municipalityLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, palette, radius, shadow, space } from '@/theme/tokens';
@@ -26,7 +27,8 @@ function greeting() {
 // v3.1 "09 Home".
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const { plan, profile, done, account } = useApp();
+  const { plan, profile, done, account, saved, dates } = useApp();
+  const nextDate = dates.find((d) => daysUntil(d.date) >= 0);
   const place = municipalityLabel(profile.municipality);
   const hasAnswers = profile.priorities.length > 0;
   const remaining = plan.steps.filter((s) => !done.has(s.step.id));
@@ -61,7 +63,7 @@ export default function Home() {
       <View style={[styles.pad, { flexDirection: 'row', gap: space[2] }]}>
         <Pressable accessibilityRole="search" onPress={() => router.push('/(tabs)/resources')} style={styles.search}>
           <Feather name="search" size={18} color={color.textSecondary} />
-          <Txt style={{ color: color.textSecondary, flex: 1 }}>Search or ask a question</Txt>
+          <Txt style={{ color: color.textSecondary, flex: 1 }}>Search services and support</Txt>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Ask Startline" onPress={() => router.push('/(tabs)/ask')} style={styles.askButton}>
           <Feather name="zap" size={20} color={palette.white} />
@@ -72,7 +74,7 @@ export default function Home() {
         {next ? (
           <Pressable accessibilityRole="button" accessibilityLabel={`Next step: ${next.step.title}`} onPress={() => router.push(`/step/${next.step.id}`)} style={styles.nextCard}>
             <Image source={stepPhoto(next.step)} style={StyleSheet.absoluteFill} contentFit="cover" accessible={false} />
-            <LinearGradient colors={['rgba(5,41,37,0.25)', 'rgba(5,41,37,0.15)', 'rgba(5,41,37,0.85)']} locations={[0, 0.4, 1]} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(5,41,37,0.7)', 'rgba(5,41,37,0.2)', 'rgba(5,41,37,0.35)', 'rgba(5,41,37,0.9)']} locations={[0, 0.3, 0.55, 1]} style={StyleSheet.absoluteFill} />
             <Chip tone="media" icon="star" label={`Next step · ${next.step.categoryLabel}`} />
             <View style={{ marginTop: 'auto', gap: space[3] }}>
               <Txt variant="screenHeading" style={{ color: palette.white }}>
@@ -100,6 +102,21 @@ export default function Home() {
           </Card>
         )}
       </View>
+
+      {hasAnswers && !saved && !account ? (
+        <View style={styles.pad}>
+          <Card style={styles.savePrompt}>
+            <Feather name="alert-circle" size={20} color={color.textBrand} />
+            <View style={{ flex: 1, gap: 2 }}>
+              <Txt variant="cardTitle">Your plan isn't saved yet</Txt>
+              <Txt variant="caption" style={{ color: color.textSecondary }}>
+                If you close the app, it starts over. Save it on this phone or with an account.
+              </Txt>
+            </View>
+            <PillButton label="Save" style={{ minHeight: 40, paddingHorizontal: space[4] }} onPress={() => router.push('/account/save')} />
+          </Card>
+        </View>
+      ) : null}
 
       {!hasAnswers ? (
         <View style={styles.pad}>
@@ -144,7 +161,7 @@ export default function Home() {
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 'auto' }}>
                         <Feather name="check" size={12} color={color.textBrand} />
                         <Txt variant="caption" numberOfLines={1} style={{ color: color.textSecondary, flex: 1 }}>
-                          {source.publisher} · Sample
+                          {source.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]} · Sample
                         </Txt>
                       </View>
                     ) : null}
@@ -158,19 +175,18 @@ export default function Home() {
 
       <View style={styles.pad}>
         <SectionHeader title="Coming up" action="See all" onAction={() => router.push('/dates')} />
-        <Pressable accessibilityRole="button" onPress={() => router.push('/dates')}>
-          <LinearGradient colors={[palette.teal800, palette.deep]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.coming}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
-              <View style={styles.comingIcon}>
-                <Feather name="calendar" size={18} color={palette.white} />
-              </View>
-              <Txt variant="title" style={{ color: palette.white, flex: 1 }}>
-                No dates added yet
-              </Txt>
-            </View>
-            <Txt style={{ color: 'rgba(255,255,255,0.8)' }}>Add dates from letters or appointments so you don't have to remember them.</Txt>
-          </LinearGradient>
-        </Pressable>
+        <Card onPress={() => router.push('/dates')} accessibilityLabel={nextDate ? `Next date: ${nextDate.title}` : 'Add a date'} style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
+          <View style={styles.comingIcon}>
+            <Feather name="calendar" size={18} color={color.textBrand} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Txt variant="cardTitle">{nextDate ? nextDate.title : 'No dates added yet'}</Txt>
+            <Txt variant="caption" style={{ color: color.textSecondary }}>
+              {nextDate ? `${formatDate(nextDate.date)} · ${whenLabel(nextDate.date)}` : 'Add dates from letters or appointments'}
+            </Txt>
+          </View>
+          <Feather name={nextDate ? 'chevron-right' : 'plus'} size={20} color={color.textSecondary} />
+        </Card>
       </View>
 
       <View style={styles.pad}>
@@ -223,6 +239,6 @@ const styles = StyleSheet.create({
   recPhoto: { width: '100%', height: 120 },
   recBody: { flex: 1, padding: space[3], gap: space[2] },
   recTitle: { minHeight: 44 },
-  coming: { borderRadius: radius.xl, padding: space[5], gap: space[3] },
-  comingIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
+  comingIcon: { width: 44, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },
+  savePrompt: { flexDirection: 'row', gap: space[3], alignItems: 'center', backgroundColor: color.brandSubtle, shadowOpacity: 0, borderWidth: 1, borderColor: color.borderBrand },
 });

@@ -31,7 +31,7 @@ export default function DocumentSaved() {
       }
       title="Document saved"
       helper="It stays on this phone. Startline uses it only to show steps that apply to you."
-      primary={{ label: 'Back to my plan', onPress: () => router.replace('/') }}
+      primary={{ label: 'Done', onPress: () => router.dismissTo('/privacy') }}
     >
       <Card style={{ gap: 2 }}>
         <Txt variant="cardTitle">{TITLES[doc] ?? TITLES.claimant}</Txt>

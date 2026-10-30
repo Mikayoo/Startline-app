@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { AccountScreen, CodeInput, maskContact, NoteCard, TextLink } from '@/components/account';
-import { Txt } from '@/components/ui';
+import { DemoNotice, Txt } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
@@ -19,7 +19,7 @@ export default function Verify() {
       icon="smartphone"
       title="Enter the 6-digit code"
       helper={`We sent it by text to ${maskContact(contact)}.`}
-      primary={{ label: 'Continue', disabled: code.length < 6, onPress: () => router.push(`/account/passcode?flow=${flow}&stage=create`) }}
+      primary={{ label: 'Continue', disabled: code.length < 6, hint: 'Enter all 6 digits.', onPress: () => router.push(`/account/passcode?flow=${flow}&stage=create`) }}
     >
       <CodeInput value={code} onChange={setCode} />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -29,9 +29,7 @@ export default function Verify() {
         <TextLink label="Wrong number?" onPress={() => router.back()} />
       </View>
       <NoteCard icon="clock">Not getting a text? Messages can take a few minutes to arrive.</NoteCard>
-      <NoteCard icon="alert-circle" tone="warning">
-        Prototype: no text is sent. Enter any 6 digits.
-      </NoteCard>
+      <DemoNotice text="Prototype: no text is sent. Enter any 6 digits." />
     </AccountScreen>
   );
 }

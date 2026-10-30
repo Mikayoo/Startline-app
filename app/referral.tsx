@@ -1,10 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { StickyFooter } from '@/components/layout';
+import { Field } from '@/components/account';
+import { FooterButton, StickyFooter } from '@/components/layout';
 import { Card, Chip, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
 import { PRIORITY_OPTIONS } from '@/content/steps';
 import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
@@ -60,14 +61,14 @@ export default function Referral() {
     <View style={styles.root}>
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + space[3], paddingHorizontal: space[6], paddingBottom: 180, gap: space[4] }}>
         <IconButton icon="x" label="Close" onPress={() => router.back()} />
-        <Chip tone="warning" icon="alert-circle" label="Demo mode · nothing is sent" />
+        <Chip tone="neutral" icon="info" label="Demo mode · nothing is sent" />
         {phase === 'form' ? (
           <>
             <Txt variant="screenHeading" accessibilityRole="header">
               How should a settlement worker reach you?
             </Txt>
             <Txt style={{ color: color.textSecondary }}>We only ask for what they need to call or write to you. No documents or case details.</Txt>
-            <View style={{ flexDirection: 'row', gap: space[2] }}>
+            <View style={styles.segments}>
               {(['phone', 'email'] as Contact[]).map((c) => (
                 <Pressable
                   key={c}
@@ -84,16 +85,19 @@ export default function Referral() {
             </View>
             <Field
               label={contactBy === 'phone' ? 'Phone number' : 'Email address'}
+              prefix={contactBy === 'phone' ? 'CA +1' : undefined}
               value={contact}
-              onChange={(v) => setContact(contactBy === 'phone' ? formatPhone(v) : v)}
-              keyboard={contactBy === 'phone' ? 'phone-pad' : 'email-address'}
+              onChangeText={(v) => setContact(contactBy === 'phone' ? formatPhone(v) : v)}
+              placeholder={contactBy === 'phone' ? '(519) 555-0142' : 'you@example.com'}
+              keyboardType={contactBy === 'phone' ? 'phone-pad' : 'email-address'}
+              autoComplete={contactBy === 'phone' ? 'tel' : 'email'}
             />
             {showContactError ? (
               <Txt variant="caption" style={{ color: color.error }} accessibilityLiveRegion="polite">
                 {contactBy === 'phone' ? "Check the number. Canadian area codes and numbers don't start with 0 or 1." : 'Check the email address, for example name@example.com.'}
               </Txt>
             ) : null}
-            <Field label="First name (optional)" value={firstName} onChange={setFirstName} />
+            <Field label="First name (optional)" value={firstName} onChangeText={setFirstName} autoComplete="name" />
           </>
         ) : (
           <>
@@ -134,10 +138,10 @@ export default function Referral() {
       </ScrollView>
       <StickyFooter>
         {phase === 'form' ? (
-          <PillButton label="Review before sending" arrow disabled={!contactValid} onPress={() => setPhase('review')} />
+          <FooterButton label="Review before sending" arrow hint={contactBy === 'phone' ? 'Enter a 10-digit phone number.' : 'Enter your email address.'} disabled={!contactValid} onPress={() => setPhase('review')} />
         ) : (
           <>
-            <PillButton label="Send request" arrow disabled={!consent} onPress={() => setPhase('sent')} />
+            <FooterButton label="Send request" arrow hint="Tick the box above to agree before sending." disabled={!consent} onPress={() => setPhase('sent')} />
             <PillButton tone="ghost" label="Edit details" onPress={() => setPhase('form')} />
           </>
         )}
@@ -146,37 +150,12 @@ export default function Referral() {
   );
 }
 
-function Field({ label, value, onChange, keyboard = 'default' }: { label: string; value: string; onChange: (v: string) => void; keyboard?: 'default' | 'phone-pad' | 'email-address' }) {
-  return (
-    <View style={{ gap: 6 }}>
-      <Txt variant="label">{label}</Txt>
-      <TextInput
-        value={value}
-        onChangeText={onChange}
-        keyboardType={keyboard}
-        autoCapitalize={keyboard === 'email-address' ? 'none' : 'words'}
-        accessibilityLabel={label}
-        style={styles.input}
-      />
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.surfaceWarm },
-  segment: { flex: 1, minHeight: 44, borderRadius: radius.pill, borderWidth: 1.5, borderColor: color.borderDefault, alignItems: 'center', justifyContent: 'center' },
-  segmentOn: { backgroundColor: color.actionPrimary, borderColor: color.actionPrimary },
-  input: {
-    minHeight: 52,
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    borderColor: color.borderDefault,
-    backgroundColor: color.surface,
-    paddingHorizontal: space[4],
-    fontFamily: font.regular,
-    fontSize: 16,
-    color: color.textPrimary,
-  },
+  segments: { flexDirection: 'row', backgroundColor: palette.white, borderRadius: radius.pill, padding: 4 },
+  segment: { flex: 1, minHeight: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
+  segmentOn: { backgroundColor: color.actionPrimary },
   row: { flexDirection: 'row', gap: space[3], alignItems: 'baseline' },
   consent: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start', padding: space[4], borderRadius: radius.card, backgroundColor: color.surface },
   box: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: color.borderDefault, alignItems: 'center', justifyContent: 'center' },

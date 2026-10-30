@@ -19,6 +19,10 @@ const LANGUAGES = [
   { id: 'es', native: 'Español', helper: 'Coming soon', ready: false },
 ];
 
+// Plus Jakarta Sans has no Cyrillic or Arabic, so the multilingual greeting
+// uses the system font for every script and stays in one typeface.
+const GREETING_FONT = Platform.select({ ios: 'System', android: 'sans-serif', default: 'system-ui, sans-serif' });
+
 const TEXT_SIZE_HELP =
   Platform.OS === 'ios'
     ? 'Startline follows your iPhone text size.\n\nOpen Settings, then Display & Brightness, then Text Size, and drag the slider. For even larger text, go to Settings, Accessibility, Display & Text Size, Larger Text.'
@@ -45,7 +49,7 @@ export default function Intro() {
             </Txt>
           </View>
           <View style={styles.heroText}>
-            <Txt variant="label" style={{ color: 'rgba(255,255,255,0.9)' }}>
+            <Txt variant="label" style={{ fontFamily: GREETING_FONT, color: 'rgba(255,255,255,0.9)' }}>
               Welcome · Bienvenue · أهلاً بك · Bienvenido · Вітаємо
             </Txt>
             <Txt variant="display" style={{ color: palette.white }} accessibilityRole="header">

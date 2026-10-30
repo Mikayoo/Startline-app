@@ -23,6 +23,7 @@ export default function Place() {
           label="Continue"
           arrow
           disabled={!profile.municipality}
+          hint="Choose where you live now to continue."
           onPress={() => go('/onboarding/household')}
         />
       }

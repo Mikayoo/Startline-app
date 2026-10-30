@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
 import { AccountScreen, maskContact, NoteCard } from '@/components/account';
+import { DemoNotice } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 
 // v3.1 "A2 Email verification" and "A3 Email resent".
@@ -26,9 +27,7 @@ export default function EmailCheck() {
       ) : (
         <NoteCard icon="clock">Can't find it? Check your spam folder. Links expire after 24 hours.</NoteCard>
       )}
-      <NoteCard icon="alert-circle" tone="warning">
-        Prototype: no email is sent. Tap Continue.
-      </NoteCard>
+      <DemoNotice text="Prototype: no email is sent. Tap Continue." />
     </AccountScreen>
   );
 }

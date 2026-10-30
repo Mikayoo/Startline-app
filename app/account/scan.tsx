@@ -25,7 +25,7 @@ export default function Scan() {
         <Txt style={{ color: 'rgba(255,255,255,0.75)', textAlign: 'center' }}>
           Keep all four corners inside the frame. We'll take the photo when it's clear.
         </Txt>
-        <Txt variant="caption" style={{ color: palette.amber500, textAlign: 'center' }}>
+        <Txt variant="caption" style={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center' }}>
           Prototype: the camera isn't connected yet.
         </Txt>
       </View>

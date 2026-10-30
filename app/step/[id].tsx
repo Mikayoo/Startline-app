@@ -40,7 +40,6 @@ export default function StepDetail() {
       <ScrollView contentContainerStyle={{ paddingBottom: 160 }}>
         <PhotoHeader
           photo={stepPhoto(step)}
-          action={{ icon: 'search', label: 'Find local support', onPress: () => router.push('/(tabs)/resources') }}
         >
           <Chip tone="media" icon={STEP_ICON[step.category]} label={planned ? `Step ${plan.steps.indexOf(planned) + 1} · ${step.categoryLabel}` : step.categoryLabel} />
           <Txt variant="display" style={{ color: palette.white, fontSize: 30, lineHeight: 36 }} accessibilityRole="header">

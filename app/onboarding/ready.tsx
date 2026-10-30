@@ -28,7 +28,7 @@ export default function PlanReady() {
                 Your plan is ready
               </Txt>
               <Txt style={{ color: 'rgba(255,255,255,0.85)' }}>
-                {now.length} steps based on your answers. Start with one. The others will wait.
+                {now.length} steps to start with, {plan.steps.length} in total. Start with one. The others will wait.
               </Txt>
             </View>
           </View>
