@@ -1,11 +1,12 @@
 import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { View } from 'react-native';
 
+import { stepPhoto } from '@/content/photos';
 import { PlannedStep } from '@/logic/plan';
-import { color, space } from '@/theme/tokens';
+import { color, radius, space } from '@/theme/tokens';
 
-import { STEP_ICON } from './layout';
 import { Card, Chip, IconTile, Meta, Txt } from './ui';
 
 export function StepCard({
@@ -29,7 +30,11 @@ export function StepCard({
       accessibilityLabel={`Step ${index + 1}: ${step.title}. ${step.categoryLabel}. About ${step.minutes} minutes.${done ? ' Done.' : ''}`}
       style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}
     >
-      <IconTile icon={done ? 'check' : STEP_ICON[step.category]} tint={done ? color.successSubtle : color.brandSubtle} />
+      {done ? (
+        <IconTile icon="check" size={72} tint={color.successSubtle} />
+      ) : (
+        <Image source={stepPhoto(step)} style={{ width: 72, height: 72, borderRadius: radius.lg }} contentFit="cover" accessible={false} />
+      )}
       <View style={{ flex: 1, gap: 4 }}>
         <View style={{ flexDirection: 'row', gap: space[2], alignItems: 'center' }}>
           {highlight && !done ? <Chip tone="solid" label="Start here" style={{ alignSelf: 'center' }} /> : <Chip tone={done ? 'neutral' : 'brand'} label={done ? 'Done' : `Step ${index + 1}`} style={{ alignSelf: 'center' }} />}

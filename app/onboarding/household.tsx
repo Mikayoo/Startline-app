@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { FooterButton, QuestionScreen } from '@/components/layout';
@@ -8,6 +8,9 @@ import { useApp } from '@/state/AppState';
 import { space } from '@/theme/tokens';
 
 export default function Household() {
+  // Opened from Profile with ?edit=1: save and go back instead of continuing.
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const go = (href: Parameters<typeof router.push>[0]) => (edit ? router.back() : router.push(href));
   const { profile, update } = useApp();
   return (
     <QuestionScreen
@@ -17,13 +20,13 @@ export default function Household() {
       helper="This helps us add steps like school registration. We don't ask for names."
       footer={
         <>
-          <FooterButton label="Continue" arrow disabled={!profile.household} onPress={() => router.push('/onboarding/priorities')} />
+          <FooterButton label="Continue" arrow disabled={!profile.household} onPress={() => go('/onboarding/priorities')} />
           <FooterButton
             tone="ghost"
             label="Skip this question"
             onPress={() => {
               update({ household: null });
-              router.push('/onboarding/priorities');
+              go('/onboarding/priorities');
             }}
           />
         </>

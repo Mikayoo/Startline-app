@@ -117,14 +117,16 @@ const TAB_ICON: Record<string, IconName> = {
   index: 'home',
   path: 'map',
   ask: 'message-square',
-  help: 'life-buoy',
+  resources: 'book-open',
+  profile: 'user',
 };
 
 const TAB_LABEL: Record<string, string> = {
   index: 'Home',
   path: 'My Path',
   ask: 'Ask',
-  help: 'Get help',
+  resources: 'Resources',
+  profile: 'Profile',
 };
 
 // The v3.1 floating pill tab bar.
@@ -149,7 +151,7 @@ export function PillTabBar({ state, emitter, navigateToTab }: BottomTabBarProps)
               style={[styles.tab, focused && styles.tabActive]}
             >
               <Feather name={TAB_ICON[name] ?? 'circle'} size={20} color={focused ? palette.white : palette.navInactive} />
-              <Txt variant="label" style={{ color: focused ? palette.white : color.textSecondary, fontSize: 11 }}>
+              <Txt variant="label" numberOfLines={1} style={{ color: focused ? palette.white : color.textSecondary, fontSize: 10 }}>
                 {TAB_LABEL[name] ?? name}
               </Txt>
             </Pressable>
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     ...shadow.floating,
   },
   tab: {
-    width: 74,
+    width: 64,
     height: 58,
     borderRadius: radius.pill,
     alignItems: 'center',

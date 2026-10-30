@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, ScrollViewInstance, StyleSheet, TextInput, View } from 'react-native';
@@ -34,12 +35,28 @@ export default function Ask() {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView ref={scroll} contentContainerStyle={{ paddingTop: insets.top + space[3], paddingHorizontal: space[6], paddingBottom: 220, gap: space[4] }}>
-        <Txt variant="screenHeading" accessibilityRole="header">
-          Ask Startline
-        </Txt>
-        <Txt style={{ color: color.textSecondary }}>
-          Ask in your own words. Every answer shows where it came from. If Startline isn't sure, it will say so.
-        </Txt>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
+          <View style={styles.avatar}>
+            <Feather name="zap" size={20} color={palette.white} />
+          </View>
+          <View>
+            <Txt variant="screenHeading" accessibilityRole="header">
+              Ask Startline
+            </Txt>
+            <Txt variant="caption" style={{ color: color.textSecondary }}>
+              Navigation assistant
+            </Txt>
+          </View>
+        </View>
+        {turns.length === 0 ? (
+          <LinearGradient colors={[palette.teal800, palette.deep]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.intro}>
+            <Chip tone="media" icon="check" label="Sources shown on every answer" />
+            <Txt variant="screenHeading" style={{ color: palette.white }}>
+              What can I help you understand?
+            </Txt>
+            <Txt style={{ color: 'rgba(255,255,255,0.8)' }}>Ask in your own words. Every answer shows where it came from. If Startline isn't sure, it will say so.</Txt>
+          </LinearGradient>
+        ) : null}
         {turns.length === 0 ? (
           <View style={{ gap: space[2] }}>
             <Txt variant="label" style={{ color: color.textSecondary }}>
@@ -109,12 +126,14 @@ function AnswerView({ result }: { result: AnswerResult }) {
         label={result.kind === 'urgent' ? 'Get help now' : result.kind === 'personal' ? 'A person should look at this' : "Startline can't verify this"}
       />
       <Txt variant="bodyLarge">{result.text}</Txt>
-      {result.kind !== 'urgent' ? <PillButton tone="secondary" label="Talk to a person" arrow onPress={() => router.push('/(tabs)/help')} /> : null}
+      {result.kind !== 'urgent' ? <PillButton tone="secondary" label="Talk to a person" arrow onPress={() => router.push('/help')} /> : null}
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
+  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: palette.teal700, alignItems: 'center', justifyContent: 'center' },
+  intro: { borderRadius: radius.xl, padding: space[5], gap: space[3] },
   suggestion: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.pill, backgroundColor: color.brandSubtle },
   question: { alignSelf: 'flex-end', maxWidth: '85%', backgroundColor: color.actionPrimary, borderRadius: radius.card, borderBottomRightRadius: 6, padding: space[3] },
   composer: {

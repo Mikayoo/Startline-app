@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
 import { FooterButton, QuestionScreen } from '@/components/layout';
@@ -9,6 +9,9 @@ import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
 
 export default function Priorities() {
+  // Opened from Profile with ?edit=1: save and go back instead of continuing.
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const go = (href: Parameters<typeof router.push>[0]) => (edit ? router.back() : router.push(href));
   const { profile, togglePriority } = useApp();
   const count = profile.priorities.length;
   return (
@@ -22,7 +25,7 @@ export default function Priorities() {
           label={count ? 'See my plan' : 'Pick at least one'}
           arrow={count > 0}
           disabled={count === 0}
-          onPress={() => router.push('/onboarding/ready')}
+          onPress={() => go('/onboarding/ready')}
         />
       }
     >

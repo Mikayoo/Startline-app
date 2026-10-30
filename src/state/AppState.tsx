@@ -36,6 +36,7 @@ export const emptyProfile: Profile = {
 interface Saved {
   profile: Profile;
   done: string[];
+  services?: string[];
   savedAt: string;
 }
 
@@ -52,6 +53,8 @@ interface AppState {
   toggleDone: (stepId: string) => void;
   savePlan: () => Promise<void>;
   deleteData: () => Promise<void>;
+  savedServices: Set<string>;
+  toggleService: (id: string) => void;
   account: Account | null;
   draft: AccountDraft;
   unlocked: boolean;
@@ -67,6 +70,7 @@ const Ctx = createContext<AppState | null>(null);
 export function AppStateProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [done, setDone] = useState<Set<string>>(new Set());
+  const [savedServices, setSavedServices] = useState<Set<string>>(new Set());
   const [saved, setSaved] = useState(false);
   const [ready, setReady] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
@@ -81,6 +85,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
           const data = JSON.parse(raw) as Saved;
           setProfile(data.profile);
           setDone(new Set(data.done));
+          setSavedServices(new Set(data.services ?? []));
           setSaved(true);
           setIntroSeen(true);
         }
@@ -95,8 +100,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const plan = useMemo(() => buildPlan(profile), [profile]);
 
-  const persist = useCallback(async (p: Profile, d: Set<string>) => {
-    const data: Saved = { profile: p, done: [...d], savedAt: new Date().toISOString() };
+  const persist = useCallback(async (p: Profile, d: Set<string>, sv?: Set<string>) => {
+    const data: Saved = { profile: p, done: [...d], services: [...(sv ?? [])], savedAt: new Date().toISOString() };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, []);
 
@@ -116,22 +121,36 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         const next = new Set(prev);
         if (next.has(stepId)) next.delete(stepId);
         else next.add(stepId);
-        if (saved) persist(profile, next).catch(() => {});
+        if (saved) persist(profile, next, savedServices).catch(() => {});
         return next;
       });
     },
-    [saved, profile, persist],
+    [saved, profile, persist, savedServices],
   );
 
   const savePlan = useCallback(async () => {
-    await persist(profile, done);
+    await persist(profile, done, savedServices);
     setSaved(true);
-  }, [persist, profile, done]);
+  }, [persist, profile, done, savedServices]);
+
+  const toggleService = useCallback(
+    (id: string) => {
+      setSavedServices((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        if (saved) persist(profile, done, next).catch(() => {});
+        return next;
+      });
+    },
+    [saved, profile, done, persist],
+  );
 
   const deleteData = useCallback(async () => {
     await AsyncStorage.multiRemove([STORAGE_KEY, ACCOUNT_KEY]);
     setProfile(emptyProfile);
     setDone(new Set());
+    setSavedServices(new Set());
     setSaved(false);
     setIntroSeen(false);
     setAccount(null);
@@ -155,13 +174,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       createdAt: account?.createdAt ?? new Date().toISOString(),
     };
     await AsyncStorage.setItem(ACCOUNT_KEY, JSON.stringify(next));
-    await persist(profile, done);
+    await persist(profile, done, savedServices);
     setAccount(next);
     setSaved(true);
     setUnlocked(true);
     setIntroSeen(true);
     setDraftState({});
-  }, [draft, account, persist, profile, done]);
+  }, [draft, account, persist, profile, done, savedServices]);
 
   const updateAccount = useCallback(
     async (patch: Partial<Account>) => {
@@ -184,11 +203,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppState>(
     () => ({
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
-      account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     }),
     [
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
-      account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     ],
   );
 
