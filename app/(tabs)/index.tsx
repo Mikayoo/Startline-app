@@ -135,13 +135,13 @@ export default function Home() {
               return (
                 <Pressable key={item.step.id} accessibilityRole="button" onPress={() => router.push(`/step/${item.step.id}`)} style={styles.rec}>
                   <Image source={stepPhoto(item.step)} style={styles.recPhoto} contentFit="cover" accessible={false} />
-                  <View style={{ padding: space[3], gap: space[2] }}>
+                  <View style={styles.recBody}>
                     <Chip label={item.step.categoryLabel} />
-                    <Txt variant="cardTitle" numberOfLines={2}>
+                    <Txt variant="cardTitle" numberOfLines={2} style={styles.recTitle}>
                       {item.step.title}
                     </Txt>
                     {source ? (
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 'auto' }}>
                         <Feather name="check" size={12} color={color.textBrand} />
                         <Txt variant="caption" numberOfLines={1} style={{ color: color.textSecondary, flex: 1 }}>
                           {source.publisher} · Sample
@@ -217,8 +217,12 @@ const styles = StyleSheet.create({
   quickRow: { flexDirection: 'row', gap: space[3] },
   quick: { flex: 1, backgroundColor: color.surface, borderRadius: radius.card, paddingVertical: space[4], paddingHorizontal: space[2], alignItems: 'center', gap: space[2], ...shadow.card },
   quickIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },
-  rec: { width: 224, backgroundColor: color.surface, borderRadius: radius.card, overflow: 'hidden', ...shadow.card },
+  // Every recommended card is the same size: fixed width and height, a
+  // two-line title slot and the source pinned to the bottom.
+  rec: { width: 224, height: 252, backgroundColor: color.surface, borderRadius: radius.card, overflow: 'hidden', ...shadow.card },
   recPhoto: { width: '100%', height: 120 },
+  recBody: { flex: 1, padding: space[3], gap: space[2] },
+  recTitle: { minHeight: 44 },
   coming: { borderRadius: radius.xl, padding: space[5], gap: space[3] },
   comingIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
 });
