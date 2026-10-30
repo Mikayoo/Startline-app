@@ -45,4 +45,28 @@ describe('ask', () => {
     const r = ask('How do I apply for a SIN?', withdrawn);
     if (r.kind === 'answer') expect(r.citations.map((c) => c.sourceId)).not.toContain('service-canada-sin');
   });
+
+  it('treats having nowhere safe to sleep as urgent', () => {
+    expect(ask('I am being evicted tomorrow and have nowhere to sleep').kind).toBe('urgent');
+    expect(ask('I have nowhere to sleep tonight').kind).toBe('urgent');
+    expect(ask('We are sleeping in the car').kind).toBe('urgent');
+    expect(ask('my husband hits me').kind).toBe('urgent');
+  });
+
+  it('never predicts the outcome of a claim', () => {
+    expect(ask('Will my refugee claim be accepted?').kind).toBe('personal');
+    expect(ask('Is my claim going to be approved?').kind).toBe('personal');
+    expect(ask('What are my chances at the hearing?').kind).toBe('personal');
+    expect(ask('My landlord is evicting me').kind).toBe('personal');
+  });
+
+  it('still answers ordinary questions', () => {
+    expect(ask('How do I get a health card?').kind).toBe('answer');
+    expect(ask('Where can I find a shelter?').kind).not.toBe('personal');
+  });
+
+  it('does not answer off-topic questions just because they name a city', () => {
+    expect(ask('Best pizza in Waterloo?').kind).toBe('unsupported');
+    expect(ask('Settlement services in Waterloo').kind).toBe('answer');
+  });
 });

@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StickyFooter } from '@/components/layout';
 import { Card, Chip, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
 import { PRIORITY_OPTIONS } from '@/content/steps';
+import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { municipalityLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, font, palette, radius, space } from '@/theme/tokens';
@@ -23,6 +24,8 @@ export default function Referral() {
   const [phase, setPhase] = useState<Phase>('form');
   const [contactBy, setContactBy] = useState<Contact>('phone');
   const [contact, setContact] = useState('');
+  const contactValid = contactBy === 'phone' ? isValidPhone(contact) : isValidEmail(contact);
+  const showContactError = contactBy === 'phone' ? phoneDigits(contact).length === 10 && !contactValid : contact.includes('@') && contact.length > 5 && !contactValid;
   const [firstName, setFirstName] = useState('');
   const [consent, setConsent] = useState(false);
 
@@ -70,7 +73,7 @@ export default function Referral() {
                   key={c}
                   accessibilityRole="radio"
                   accessibilityState={{ selected: contactBy === c }}
-                  onPress={() => setContactBy(c)}
+                  onPress={() => { setContactBy(c); setContact(''); }}
                   style={[styles.segment, contactBy === c && styles.segmentOn]}
                 >
                   <Txt variant="label" style={{ color: contactBy === c ? palette.white : color.textPrimary, fontSize: 14 }}>
@@ -79,7 +82,17 @@ export default function Referral() {
                 </Pressable>
               ))}
             </View>
-            <Field label={contactBy === 'phone' ? 'Phone number' : 'Email address'} value={contact} onChange={setContact} keyboard={contactBy === 'phone' ? 'phone-pad' : 'email-address'} />
+            <Field
+              label={contactBy === 'phone' ? 'Phone number' : 'Email address'}
+              value={contact}
+              onChange={(v) => setContact(contactBy === 'phone' ? formatPhone(v) : v)}
+              keyboard={contactBy === 'phone' ? 'phone-pad' : 'email-address'}
+            />
+            {showContactError ? (
+              <Txt variant="caption" style={{ color: color.error }} accessibilityLiveRegion="polite">
+                {contactBy === 'phone' ? "Check the number. Canadian area codes and numbers don't start with 0 or 1." : 'Check the email address, for example name@example.com.'}
+              </Txt>
+            ) : null}
             <Field label="First name (optional)" value={firstName} onChange={setFirstName} />
           </>
         ) : (
@@ -121,7 +134,7 @@ export default function Referral() {
       </ScrollView>
       <StickyFooter>
         {phase === 'form' ? (
-          <PillButton label="Review before sending" arrow disabled={contact.trim().length < 5} onPress={() => setPhase('review')} />
+          <PillButton label="Review before sending" arrow disabled={!contactValid} onPress={() => setPhase('review')} />
         ) : (
           <>
             <PillButton label="Send request" arrow disabled={!consent} onPress={() => setPhase('sent')} />

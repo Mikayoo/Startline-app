@@ -30,6 +30,15 @@ const URGENT = [
   /\bunsafe\b/,
   /\bviolence\b/,
   /\babuse/,
+  // Nowhere safe to sleep tonight is an emergency, not a research question.
+  /\bnowhere (safe )?to (sleep|stay|go)\b/,
+  /\b(sleep|sleeping|slept) (outside|on the street|in (my|the|a) car)\b/,
+  /\bon the street\b/,
+  /\bevict\w* (me |us )?(today|tonight|tomorrow)\b/,
+  /\b(today|tonight|tomorrow)\b.*\bevict/,
+  /\b(hits?|hitting|beats?|beating|hurts?|hurting) (me|my (child|children|kids?|son|daughter))\b/,
+  /\bthreaten\w*/,
+  /\bafraid (of|for) my (life|safety)\b/,
 ];
 
 // Questions about one person's own case: the app explains, a person decides.
@@ -41,6 +50,12 @@ const PERSONAL = [
   /\bremoval order\b/,
   /\bappeal\b/,
   /\bshould i\b/,
+  // Predictions about someone's own claim or application.
+  /\b(will|would|is|was|does|did) my (refugee )?(claim|case|application|hearing|appeal)\b/,
+  /\bmy (refugee )?(claim|case|application)\b.*\b(accepted|approved|refused|rejected|denied|succeed|pass)\b/,
+  /\b(chance|chances|likely|odds)\b.*\b(claim|case|application|hearing)\b/,
+  /\bevict/,
+  /\blandlord\b.*\b(kick|lock|throw)\w*\b/,
 ];
 
 const STOP = new Set(
@@ -56,6 +71,10 @@ export function tokens(text: string): string[] {
 }
 
 const MIN_SCORE = 2;
+
+// Place names say where, not what. On their own they must not make an
+// off-topic question look answerable ("best pizza in Waterloo").
+const PLACES = new Set('kitchener waterloo cambridge region ontario canada local nearby near'.split(' '));
 
 function score(passage: Passage, words: string[]): number {
   const keys = new Set(passage.keywords);
@@ -95,7 +114,7 @@ export function ask(question: string, sources: Source[] = SOURCES): AnswerResult
     };
   }
 
-  const words = tokens(question);
+  const words = tokens(question).filter((w) => !PLACES.has(w));
   const ranked = sources
     .filter((s) => s.reviewStatus !== 'withdrawn')
     .flatMap((s) => s.passages.map((p) => ({ source: s, passage: p, score: score(p, words) })))
