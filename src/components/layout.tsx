@@ -1,13 +1,13 @@
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/tabs';
 import { ReactNode } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Citation } from '@/logic/answer';
-import { color, palette, radius, shadow, space } from '@/theme/tokens';
+import { color, font, palette, radius, shadow, space } from '@/theme/tokens';
 
 import { IconButton, IconName, PillButton, Txt } from './ui';
 
@@ -22,10 +22,12 @@ export const STEP_ICON: Record<string, IconName> = {
   documents: 'credit-card',
 };
 
-// One onboarding question: progress, title, options, and a fixed footer.
+// One v3.1 onboarding question: back button, four progress dashes, a step
+// chip, the title, options, and a fixed footer.
 export function QuestionScreen({
   step,
   total,
+  chip,
   title,
   helper,
   children,
@@ -34,6 +36,7 @@ export function QuestionScreen({
 }: {
   step: number;
   total: number;
+  chip?: string;
   title: string;
   helper?: string;
   children: ReactNode;
@@ -45,15 +48,19 @@ export function QuestionScreen({
     <View style={[styles.screen, { paddingTop: insets.top + space[2] }]}>
       <View style={styles.qTop}>
         <IconButton icon="arrow-left" label="Back" onPress={onBack ?? (() => router.back())} />
-        <View style={styles.progressTrack} accessibilityLabel={`Question ${step} of ${total}`} accessibilityRole="progressbar">
-          <View style={[styles.progressFill, { width: `${(step / total) * 100}%` }]} />
+        <View style={styles.dashes} accessibilityLabel={`Question ${Math.min(step, total)} of ${total}`} accessibilityRole="progressbar">
+          {Array.from({ length: total }, (_, i) => (
+            <View key={i} style={[styles.dash, i < step && styles.dashOn]} />
+          ))}
         </View>
-        <Txt variant="label" style={{ color: color.textSecondary, width: 40, textAlign: 'right' }}>
-          {step} of {total}
-        </Txt>
+        <View style={styles.stepChip}>
+          <Txt variant="label" style={{ color: color.textPrimary }}>
+            {chip ?? `${step} of ${total}`}
+          </Txt>
+        </View>
       </View>
-      <ScrollView contentContainerStyle={{ padding: space[6], paddingTop: space[4], gap: space[3], paddingBottom: 140 }}>
-        <Txt variant="screenHeading" accessibilityRole="header">
+      <ScrollView contentContainerStyle={styles.qBody}>
+        <Txt style={styles.qTitle} accessibilityRole="header">
           {title}
         </Txt>
         {helper ? <Txt style={{ color: color.textSecondary, marginBottom: space[2] }}>{helper}</Txt> : null}
@@ -62,6 +69,24 @@ export function QuestionScreen({
       <View style={[styles.footer, { paddingBottom: insets.bottom + space[4] }]}>{footer}</View>
     </View>
   );
+}
+
+// Small print with a lock, used for "Why we ask" and privacy notes.
+export function LockNote({ children }: { children: ReactNode }) {
+  return (
+    <View style={styles.lockNote}>
+      <Feather name="lock" size={14} color={color.textSecondary} style={{ marginTop: 1 }} />
+      <Txt variant="caption" style={{ color: color.textSecondary, flex: 1 }}>
+        {children}
+      </Txt>
+    </View>
+  );
+}
+
+// Where Continue goes: back to Review when the person came from there.
+export function useNext(path: string) {
+  const { from } = useLocalSearchParams<{ from?: string }>();
+  return () => (from === 'review' ? router.back() : router.push(path as never));
 }
 
 export function PhotoHero({ children, height, colors = ['rgba(5,41,37,0.05)', 'rgba(5,41,37,0.55)', 'rgba(5,41,37,0.96)'] }: {
@@ -174,9 +199,14 @@ export function PillTabBar({ state, emitter, navigateToTab }: BottomTabBarProps)
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: color.surfaceWarm },
-  qTop: { flexDirection: 'row', alignItems: 'center', gap: space[3], paddingHorizontal: space[6] },
-  progressTrack: { flex: 1, height: 6, borderRadius: 3, backgroundColor: color.borderSubtle, overflow: 'hidden' },
-  progressFill: { height: 6, borderRadius: 3, backgroundColor: color.actionPrimary },
+  qTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space[5] },
+  dashes: { flexDirection: 'row', gap: 6 },
+  dash: { width: 28, height: 5, borderRadius: 3, backgroundColor: color.borderSubtle },
+  dashOn: { backgroundColor: color.actionPrimary },
+  stepChip: { minWidth: 44, height: 28, paddingHorizontal: 10, borderRadius: radius.pill, backgroundColor: color.surface, alignItems: 'center', justifyContent: 'center' },
+  qBody: { paddingHorizontal: space[6], paddingTop: space[5], gap: space[3], paddingBottom: 140, maxWidth: 520, width: '100%', alignSelf: 'center' },
+  qTitle: { fontFamily: font.bold, fontSize: 28, lineHeight: 34, letterSpacing: -0.42 },
+  lockNote: { flexDirection: 'row', gap: space[2], alignItems: 'flex-start', paddingHorizontal: space[1], marginTop: space[1] },
   footer: {
     position: 'absolute',
     left: 0,

@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card, Chip, IconName, Txt } from '@/components/ui';
 import { HOUSEHOLD_OPTIONS } from '@/content/steps';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLabel, placeLong } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, palette, radius, space } from '@/theme/tokens';
 
@@ -14,6 +14,7 @@ const STATUS_SHORT: Record<string, string> = {
   claimant: 'Refugee claimant',
   protected: 'Protected person',
   resettled: 'Resettled refugee',
+  other: 'Another status',
   unsure: 'Not shared',
 };
 
@@ -63,8 +64,10 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const { profile, account, savedServices } = useApp();
   const status = profile.status ? STATUS_SHORT[profile.status] : undefined;
-  const household = HOUSEHOLD_OPTIONS.find((h) => h.id === profile.household);
-  const place = municipalityLabel(profile.municipality);
+  const household =
+    profile.household === null ? null : profile.household.length === 0 ? 'Just me' : profile.household.map((m) => HOUSEHOLD_OPTIONS.find((h) => h.id === m)?.label).join(', ');
+  const place = placeLabel(profile);
+  const placeFull = placeLong(profile);
 
   return (
     <ScrollView style={{ backgroundColor: color.surfaceWarm }} contentContainerStyle={{ paddingBottom: 130 }}>
@@ -94,10 +97,10 @@ export default function Profile() {
           </Txt>
         </View>
         <Card style={{ paddingVertical: space[1] }}>
-          <Row icon="file-text" label="Immigration status" value={status ?? 'Not shared'} action="change" onPress={() => router.push('/onboarding/status?edit=1')} />
-          <Row icon="map-pin" label="Location" value={place} action="change" onPress={() => router.push('/onboarding/place?edit=1')} />
-          <Row icon="users" label="Household" value={household ? household.label : 'Not shared'} action="change" onPress={() => router.push('/onboarding/household?edit=1')} />
-          <Row icon="star" label="Priorities" value={profile.priorities.length ? `${profile.priorities.length} chosen` : 'None chosen'} action="change" onPress={() => router.push('/onboarding/priorities?edit=1')} />
+          <Row icon="file-text" label="Immigration status" value={status ?? 'Not shared'} action="change" onPress={() => router.push('/onboarding/status?from=review')} />
+          <Row icon="map-pin" label="Location" value={placeFull} action="change" onPress={() => router.push('/onboarding/place?from=review')} />
+          <Row icon="users" label="Household" value={household ?? 'Not shared'} action="change" onPress={() => router.push('/onboarding/household?from=review')} />
+          <Row icon="star" label="Priorities" value={profile.priorities.length ? `${profile.priorities.length} chosen` : 'None chosen'} action="change" onPress={() => router.push('/onboarding/priorities?from=review')} />
         </Card>
         <View style={{ gap: 2 }}>
           <Txt variant="title">App settings</Txt>

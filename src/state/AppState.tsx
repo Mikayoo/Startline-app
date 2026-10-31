@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Priority } from '@/content/steps';
+import { HouseholdMember, Priority } from '@/content/steps';
 import { buildPlan, MAX_PRIORITIES, Plan, Profile } from '@/logic/plan';
 
 // Answers stay in memory by default. They are written to the device only
@@ -27,7 +27,8 @@ export type AccountDraft = Partial<Account> & { pendingPasscode?: string };
 
 export const emptyProfile: Profile = {
   language: 'en',
-  municipality: null,
+  province: null,
+  city: null,
   household: null,
   status: null,
   priorities: [],
@@ -60,6 +61,10 @@ interface AppState {
   markIntroSeen: () => void;
   update: (patch: Partial<Profile>) => void;
   togglePriority: (p: Priority) => void;
+  toggleHousehold: (m: HouseholdMember) => void;
+  // in memory only, so every launch opens on the splash
+  splashSeen: boolean;
+  markSplashSeen: () => void;
   toggleDone: (stepId: string) => void;
   savePlan: () => Promise<void>;
   deleteData: () => Promise<void>;
@@ -88,6 +93,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [saved, setSaved] = useState(false);
   const [ready, setReady] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
+  const [splashSeen, setSplashSeen] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
   const [draft, setDraftState] = useState<AccountDraft>({});
   const [unlocked, setUnlocked] = useState(false);
@@ -97,7 +103,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       .then(([raw, rawAccount]) => {
         if (raw) {
           const data = JSON.parse(raw) as Saved;
-          setProfile(data.profile);
+          // plans saved before v3.1 stored one household value
+          const h = data.profile.household as unknown;
+          const household = typeof h === 'string' ? (h === 'alone' ? [] : [h]) : data.profile.household;
+          // plans saved before the Canada-wide location stored a KW municipality
+          const old = (data.profile as { municipality?: string }).municipality;
+          const place =
+            old !== undefined && !('province' in data.profile)
+              ? { province: 'ON' as const, city: old && old !== 'elsewhere' ? old[0].toUpperCase() + old.slice(1) : null }
+              : {};
+          setProfile({ ...data.profile, household, ...place } as Profile);
           setDone(new Set(data.done));
           setSavedServices(new Set(data.services ?? []));
           setDates(data.dates ?? []);
@@ -131,6 +146,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       return { ...p, priorities: [...p.priorities, id] };
     });
   }, []);
+
+  const toggleHousehold = useCallback((m: HouseholdMember) => {
+    setProfile((p) => {
+      const list = p.household ?? [];
+      return { ...p, household: list.includes(m) ? list.filter((x) => x !== m) : [...list, m] };
+    });
+  }, []);
+
+  const markSplashSeen = useCallback(() => setSplashSeen(true), []);
 
   const toggleDone = useCallback(
     (stepId: string) => {
@@ -240,11 +264,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<AppState>(
     () => ({
-      profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
+      profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleHousehold, splashSeen, markSplashSeen, toggleDone, savePlan, deleteData,
       savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     }),
     [
-      profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleDone, savePlan, deleteData,
+      profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleHousehold, splashSeen, markSplashSeen, toggleDone, savePlan, deleteData,
       savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
     ],
   );

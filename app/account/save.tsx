@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { AccountScreen, Field, TextLink } from '@/components/account';
 import { Card, DemoNotice, Txt } from '@/components/ui';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLabel } from '@/logic/plan';
 import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
@@ -34,7 +34,7 @@ export default function SavePlan() {
     >
       <Card style={{ gap: 2 }}>
         <Txt variant="cardTitle">
-          {plan.steps.length} steps · {municipalityLabel(profile.municipality)}
+          {plan.steps.length} steps · {placeLabel(profile)}
         </Txt>
         <Txt variant="caption" style={{ color: color.textSecondary }}>
           Your starting plan

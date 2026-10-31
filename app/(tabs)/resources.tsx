@@ -7,8 +7,8 @@ import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native
 import { PhotoHeader, sheetStyle } from '@/components/PhotoHeader';
 import { Card, Chip, DemoNotice, SectionHeader, Txt } from '@/components/ui';
 import { PHOTO } from '@/content/photos';
-import { Service, SERVICE_TOPICS, SERVICES } from '@/content/services';
-import { municipalityLabel } from '@/logic/plan';
+import { Service, SERVICE_TOPICS, servicesHere } from '@/content/services';
+import { placeLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, font, palette, radius, shadow, space } from '@/theme/tokens';
 
@@ -20,14 +20,14 @@ export default function Resources() {
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return SERVICES.filter((s) => (topic === 'all' || s.topics.includes(topic as Service['topics'][number])) && (!q || `${s.name} ${s.subtitle} ${s.summary}`.toLowerCase().includes(q)));
-  }, [topic, query]);
+    return servicesHere(profile.province, profile.city).filter((s) => (topic === 'all' || s.topics.includes(topic as Service['topics'][number])) && (!q || `${s.name} ${s.subtitle} ${s.summary}`.toLowerCase().includes(q)));
+  }, [topic, query, profile.province, profile.city]);
   const featured = list[0];
 
   return (
     <ScrollView style={{ backgroundColor: color.surfaceWarm }} contentContainerStyle={{ paddingBottom: 130 }} keyboardShouldPersistTaps="handled">
       <PhotoHeader photo={PHOTO.street} height={300} back={false}>
-        <Chip tone="media" icon="map-pin" label={`Resources · ${municipalityLabel(profile.municipality)}`} />
+        <Chip tone="media" icon="map-pin" label={`Resources · ${placeLabel(profile)}`} />
         <Txt variant="display" style={{ color: palette.white, fontSize: 30, lineHeight: 36 }} accessibilityRole="header">
           Find support for your next step
         </Txt>

@@ -3,7 +3,7 @@ import { STEPS } from '@/content/steps';
 import { getSource } from '@/content/sources';
 import { buildPlan, MAX_PRIORITIES, Profile, RULES_VERSION } from '@/logic/plan';
 
-const base: Profile = { language: 'en', municipality: 'kitchener', household: null, status: null, priorities: [] };
+const base: Profile = { language: 'en', province: 'ON', city: 'Kitchener', household: null, status: null, priorities: [] };
 
 describe('buildPlan', () => {
   it('gives the same plan for the same answers', () => {
@@ -35,7 +35,7 @@ describe('buildPlan', () => {
   });
 
   it('adds school registration for families with children', () => {
-    const ids = buildPlan({ ...base, household: 'children' }).steps.map((s) => s.step.id);
+    const ids = buildPlan({ ...base, household: ['children'] }).steps.map((s) => s.step.id);
     expect(ids).toContain('school-registration');
   });
 
@@ -52,7 +52,7 @@ describe('buildPlan', () => {
   });
 
   it('has no duplicate steps and groups them as now, soon, later', () => {
-    const plan = buildPlan({ ...base, status: 'claimant', household: 'children', priorities: ['housing', 'legal', 'money'] });
+    const plan = buildPlan({ ...base, status: 'claimant', household: ['children'], priorities: ['housing', 'legal', 'money'] });
     const ids = plan.steps.map((s) => s.step.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(plan.steps.filter((s) => s.stage === 'now')).toHaveLength(3);
@@ -61,9 +61,9 @@ describe('buildPlan', () => {
     expect([...stages].sort()).toEqual(stages);
   });
 
-  it('flags people outside the pilot area', () => {
-    expect(buildPlan({ ...base, municipality: 'elsewhere' }).inPilotArea).toBe(false);
-    expect(buildPlan({ ...base, municipality: 'cambridge' }).inPilotArea).toBe(true);
+  it('only has sample local agencies for Waterloo Region', () => {
+    expect(buildPlan({ ...base, province: 'BC', city: 'Vancouver' }).localSamples).toBe(false);
+    expect(buildPlan({ ...base, city: 'Cambridge' }).localSamples).toBe(true);
   });
 
   it('records the rules version', () => {

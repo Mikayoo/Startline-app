@@ -1,5 +1,5 @@
 import { PHOTO } from './photos';
-import { Priority } from './steps';
+import { Priority, Province } from './steps';
 
 // Local services shown in Resources. Sample content: names are real
 // organizations in Waterloo Region, but details have not been reviewed with
@@ -19,10 +19,34 @@ export interface Service {
   photo: number;
   howItHelps: string;
   goodToKnow: { title: string; text: string }[];
+  // Only shown to people who live here. No area means anywhere in Canada.
+  area?: { province: Province; cities?: string[] };
 }
+
+const WATERLOO_REGION = ['Kitchener', 'Waterloo', 'Cambridge'];
 
 export const SERVICES: Service[] = [
   {
+    id: '211-canada',
+    name: '211',
+    short: '211',
+    subtitle: 'Community and social services near you',
+    summary: 'A free, confidential helpline and website that connects people across Canada to services near them.',
+    topics: ['housing', 'health', 'money', 'community', 'school'],
+    tags: ['Free', 'Phone & online'],
+    modes: ['phone', 'online'],
+    free: true,
+    url: 'https://211.ca/',
+    sourceId: '211-canada',
+    photo: PHOTO.library,
+    howItHelps: 'Call or text 2-1-1, or search online, to find shelters, food, health and settlement services where you live.',
+    goodToKnow: [
+      { title: 'When to contact', text: 'Check current hours on the website for your area.' },
+      { title: 'Where', text: 'No visit needed. Call or text 2-1-1, or use 211.ca.' },
+    ],
+  },
+  {
+    area: { province: 'ON' },
     id: '211-ontario',
     name: '211 Ontario',
     short: '211',
@@ -43,6 +67,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
+    area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'kpl',
     name: 'Kitchener Public Library',
     short: 'KPL',
@@ -61,6 +86,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
+    area: { province: 'ON' },
     id: 'legal-aid',
     name: 'Legal Aid Ontario',
     short: 'LAO',
@@ -79,6 +105,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
+    area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'kwmc',
     name: 'KW Multicultural Centre',
     short: 'KWMC',
@@ -95,6 +122,7 @@ export const SERVICES: Service[] = [
     goodToKnow: [{ title: 'Before you go', text: 'Call ahead to ask which services and languages are available that day.' }],
   },
   {
+    area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'reception-house',
     name: 'Reception House Waterloo Region',
     short: 'RH',
@@ -121,6 +149,10 @@ export const SERVICE_TOPICS: { id: Service['topics'][number] | 'all'; label: str
   { id: 'language', label: 'Language' },
   { id: 'community', label: 'Community' },
 ];
+
+export function servicesHere(province: Province | null, city: string | null) {
+  return SERVICES.filter((s) => !s.area || !province || (s.area.province === province && (!s.area.cities || (city !== null && s.area.cities.includes(city)))));
+}
 
 export function getService(id: string) {
   return SERVICES.find((s) => s.id === id);

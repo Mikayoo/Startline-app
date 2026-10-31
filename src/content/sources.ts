@@ -1,3 +1,5 @@
+import type { Province } from './steps';
+
 // Source register. Every answer and plan step must point at a record here.
 //
 // PROTOTYPE STATUS: these records come from the starter pack in the
@@ -30,9 +32,32 @@ export interface Source {
   reviewer: string | null;
   limitations: string;
   passages: Passage[];
+  // Only shown to people who live here. No area means it applies across Canada.
+  area?: { province: Province; cities?: string[] };
 }
 
+const WATERLOO_REGION = ['Kitchener', 'Waterloo', 'Cambridge'];
+
 export const SOURCES: Source[] = [
+  {
+    id: '211-canada',
+    title: '211: find community and social services',
+    publisher: '211 Canada',
+    url: 'https://211.ca/',
+    jurisdiction: 'federal',
+    topics: ['housing', 'community', 'settlement', 'education', 'health', 'money'],
+    reviewStatus: 'not-reviewed',
+    lastChecked: null,
+    reviewer: null,
+    limitations: 'Navigation service. Listings are maintained by 211, not by Startline.',
+    passages: [
+      {
+        id: '211-canada-navigation',
+        text: '211 is a free, confidential helpline and website that connects people across Canada to community, social, health and government services near them. You can call or text 2-1-1.',
+        keywords: ['211', 'helpline', 'call', 'find', 'services', 'shelter', 'food', 'school', 'help', 'community', 'near'],
+      },
+    ],
+  },
   {
     id: 'ircc-claimants',
     title: 'Information for refugee claimants',
@@ -138,6 +163,7 @@ export const SOURCES: Source[] = [
     title: 'Ontario Works policy directives: residency requirements',
     publisher: 'Government of Ontario',
     url: 'https://www.ontario.ca/document/ontario-works-policy-directives/31-residency-requirements',
+    area: { province: 'ON' },
     jurisdiction: 'ontario',
     topics: ['money'],
     reviewStatus: 'not-reviewed',
@@ -157,6 +183,7 @@ export const SOURCES: Source[] = [
     title: 'Apply for OHIP and get a health card',
     publisher: 'Government of Ontario',
     url: 'https://www.ontario.ca/page/apply-ohip-and-get-health-card',
+    area: { province: 'ON' },
     jurisdiction: 'ontario',
     topics: ['health'],
     reviewStatus: 'not-reviewed',
@@ -176,6 +203,7 @@ export const SOURCES: Source[] = [
     title: 'Settlement and community services',
     publisher: 'City of Kitchener',
     url: 'https://www.kitchener.ca/welcome-to-kitchener/settlement-and-community-services/',
+    area: { province: 'ON', cities: WATERLOO_REGION },
     jurisdiction: 'city',
     topics: ['settlement', 'housing', 'community'],
     reviewStatus: 'not-reviewed',
@@ -195,6 +223,7 @@ export const SOURCES: Source[] = [
     title: 'Region of Waterloo',
     publisher: 'Region of Waterloo',
     url: 'https://www.regionofwaterloo.ca/',
+    area: { province: 'ON', cities: WATERLOO_REGION },
     jurisdiction: 'region',
     topics: ['housing', 'money', 'community'],
     reviewStatus: 'not-reviewed',
@@ -214,6 +243,7 @@ export const SOURCES: Source[] = [
     title: '211 Ontario',
     publisher: '211 Ontario',
     url: 'https://211ontario.ca/',
+    area: { province: 'ON' },
     jurisdiction: 'ontario',
     topics: ['housing', 'community', 'settlement', 'education'],
     reviewStatus: 'not-reviewed',
@@ -233,6 +263,7 @@ export const SOURCES: Source[] = [
     title: 'Kitchener-Waterloo Multicultural Centre',
     publisher: 'KW Multicultural Centre',
     url: 'https://kwmulticultural.ca/',
+    area: { province: 'ON', cities: WATERLOO_REGION },
     jurisdiction: 'agency',
     topics: ['settlement', 'community', 'language'],
     reviewStatus: 'not-reviewed',
@@ -252,6 +283,7 @@ export const SOURCES: Source[] = [
     title: 'Reception House Waterloo Region',
     publisher: 'Reception House Waterloo Region',
     url: 'https://www.receptionhouse.ca/',
+    area: { province: 'ON', cities: WATERLOO_REGION },
     jurisdiction: 'agency',
     topics: ['settlement', 'housing'],
     reviewStatus: 'not-reviewed',
@@ -270,4 +302,16 @@ export const SOURCES: Source[] = [
 
 export function getSource(id: string): Source | undefined {
   return SOURCES.find((s) => s.id === id);
+}
+
+// Whether a source applies where the person lives. Before they answer the
+// location question every source is shown.
+export function appliesHere(source: Source, province: Province | null, city: string | null): boolean {
+  if (!source.area || !province) return true;
+  if (source.area.province !== province) return false;
+  return !source.area.cities || (city !== null && source.area.cities.includes(city));
+}
+
+export function sourcesFor(ids: string[], province: Province | null, city: string | null): Source[] {
+  return ids.map(getSource).filter((s): s is Source => !!s && appliesHere(s, province, city));
 }

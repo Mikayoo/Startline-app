@@ -9,7 +9,7 @@ import { Card, Chip, DemoNotice, IconButton, IconName, PillButton, SectionHeader
 import { PHOTO, stepPhoto } from '@/content/photos';
 import { getSource } from '@/content/sources';
 import { daysUntil, formatDate, whenLabel } from '@/logic/dates';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, palette, radius, shadow, space } from '@/theme/tokens';
 
@@ -29,7 +29,7 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const { plan, profile, done, account, saved, dates } = useApp();
   const nextDate = dates.find((d) => daysUntil(d.date) >= 0);
-  const place = municipalityLabel(profile.municipality);
+  const place = placeLabel(profile);
   const hasAnswers = profile.priorities.length > 0;
   const remaining = plan.steps.filter((s) => !done.has(s.step.id));
   const next = remaining[0];
@@ -191,6 +191,7 @@ export default function Home() {
 
       <View style={styles.pad}>
         <SectionHeader title="Near you" action="See all" onAction={() => router.push('/(tabs)/resources')} />
+{plan.localSamples || !profile.province ? (
         <Card onPress={() => router.push('/service/kpl')} accessibilityLabel="Settlement workers at Kitchener Public Library" style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
           <Image source={PHOTO.dropin} style={{ width: 72, height: 72, borderRadius: radius.lg }} contentFit="cover" accessible={false} />
           <View style={{ flex: 1, gap: 4 }}>
@@ -202,6 +203,19 @@ export default function Home() {
           </View>
           <Feather name="chevron-right" size={20} color={color.textSecondary} />
         </Card>
+        ) : (
+          <Card onPress={() => router.push('/service/211-canada')} accessibilityLabel="211: community and social services near you" style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
+            <Image source={PHOTO.library} style={{ width: 72, height: 72, borderRadius: radius.lg }} contentFit="cover" accessible={false} />
+            <View style={{ flex: 1, gap: 4 }}>
+              <Chip icon="phone" label="Free · Call or text 2-1-1" />
+              <Txt variant="cardTitle">Find services near you</Txt>
+              <Txt variant="caption" style={{ color: color.textSecondary }}>
+                211 covers {place}
+              </Txt>
+            </View>
+            <Feather name="chevron-right" size={20} color={color.textSecondary} />
+          </Card>
+        )}
       </View>
 
       <View style={styles.pad}>

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { AccountScreen, SuccessBadge } from '@/components/account';
 import { Card, Txt } from '@/components/ui';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, space } from '@/theme/tokens';
 
@@ -31,7 +31,7 @@ export default function AccountReady() {
     >
       <Card style={{ gap: 2 }}>
         <Txt variant="cardTitle">
-          {plan.steps.length} steps · {municipalityLabel(profile.municipality)}
+          {plan.steps.length} steps · {placeLabel(profile)}
         </Txt>
         <Txt variant="caption" style={{ color: color.textSecondary }}>
           {account?.name ? `Saved for ${account.name}` : 'Saved to your account'}

@@ -7,7 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SourceCard } from '@/components/layout';
 import { Card, Chip, DemoNotice, PillButton, Txt } from '@/components/ui';
+import { appliesHere, SOURCES } from '@/content/sources';
 import { STEPS } from '@/content/steps';
+import { useApp } from '@/state/AppState';
 import { ask, AnswerResult } from '@/logic/answer';
 import { color, font, palette, radius, space } from '@/theme/tokens';
 
@@ -20,6 +22,7 @@ interface Turn {
 const SUGGESTED = ['How do I get a health card?', 'Where can I find a shelter tonight?', 'How do I apply for a SIN?', 'Where are free English classes?'];
 
 export default function Ask() {
+  const { profile } = useApp();
   const insets = useSafeAreaInsets();
   const [text, setText] = useState('');
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -28,7 +31,7 @@ export default function Ask() {
   const send = (q: string) => {
     const question = q.trim();
     if (!question) return;
-    setTurns((t) => [...t, { id: Date.now(), question, result: ask(question) }]);
+    setTurns((t) => [...t, { id: Date.now(), question, result: ask(question, SOURCES.filter((s) => appliesHere(s, profile.province, profile.city))) }]);
     setText('');
     setTimeout(() => scroll.current?.scrollToEnd({ animated: true }), 50);
   };

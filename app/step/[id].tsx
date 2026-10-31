@@ -9,9 +9,9 @@ import { InfoCard } from '@/components/InfoCard';
 import { PhotoHeader } from '@/components/PhotoHeader';
 import { Card, Chip, DemoNotice, Meta, PillButton, Txt } from '@/components/ui';
 import { stepPhoto } from '@/content/photos';
-import { getSource } from '@/content/sources';
+import { sourcesFor } from '@/content/sources';
 import { STEPS } from '@/content/steps';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLabel } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, palette, radius, space } from '@/theme/tokens';
 
@@ -33,7 +33,7 @@ export default function StepDetail() {
 
   const planned = plan.steps.find((s) => s.step.id === step.id);
   const isDone = done.has(step.id);
-  const sources = step.sourceIds.map(getSource).filter((s) => s !== undefined);
+  const sources = sourcesFor(step.sourceIds, profile.province, profile.city);
 
   return (
     <View style={{ flex: 1, backgroundColor: color.surfaceWarm }}>
@@ -47,7 +47,7 @@ export default function StepDetail() {
           </Txt>
           <View style={{ flexDirection: 'row', gap: space[4] }}>
             <Meta icon="clock" label={`About ${step.minutes} min`} style={{ color: 'rgba(255,255,255,0.85)' }} />
-            <Meta icon="map-pin" label={municipalityLabel(profile.municipality)} style={{ color: 'rgba(255,255,255,0.85)' }} />
+            <Meta icon="map-pin" label={placeLabel(profile)} style={{ color: 'rgba(255,255,255,0.85)' }} />
           </View>
         </PhotoHeader>
 

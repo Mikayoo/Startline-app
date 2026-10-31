@@ -1,12 +1,15 @@
-import { Household, Municipality, Priority, STEPS, Status, Step } from '@/content/steps';
+import { HouseholdMember, Priority, Province, provinceName, STEPS, Status, Step } from '@/content/steps';
 
 // Bump when the rules change, so a saved plan can say which rules made it.
 export const RULES_VERSION = '2026-10-23.1';
 
 export interface Profile {
   language: string;
-  municipality: Municipality | null;
-  household: Household | null;
+  province: Province | null;
+  // null when the city isn't listed or wasn't given
+  city: string | null;
+  // null until answered; [] means "Just me"
+  household: HouseholdMember[] | null;
   status: Status | null;
   priorities: Priority[];
 }
@@ -19,13 +22,14 @@ export interface PlannedStep {
 
 export interface Plan {
   rulesVersion: string;
-  inPilotArea: boolean;
+  // Sample local agencies only exist for Waterloo Region in the prototype.
+  localSamples: boolean;
   steps: PlannedStep[];
 }
 
 export const MAX_PRIORITIES = 3;
 
-const PILOT_AREA: Municipality[] = ['kitchener', 'waterloo', 'cambridge'];
+const SAMPLE_CITIES = ['Kitchener', 'Waterloo', 'Cambridge'];
 
 // Lower number = earlier in the plan. Safety and legal deadlines come first.
 const BASE_ORDER: Record<string, number> = {
@@ -73,7 +77,7 @@ export function buildPlan(profile: Profile): Plan {
     add('legal-help', 'Refugee claims have forms and deadlines');
     add('know-rights', 'Useful for everyone with a claim in progress');
   }
-  if (profile.household === 'children') {
+  if (profile.household?.includes('children')) {
     add('school-registration', 'You told us you have children with you');
   }
   // Everyone gets these: health coverage and a person to talk to.
@@ -101,22 +105,18 @@ export function buildPlan(profile: Profile): Plan {
 
   return {
     rulesVersion: RULES_VERSION,
-    inPilotArea: profile.municipality === null || PILOT_AREA.includes(profile.municipality),
+    localSamples: profile.province === 'ON' && profile.city !== null && SAMPLE_CITIES.includes(profile.city),
     steps,
   };
 }
 
-export function municipalityLabel(m: Municipality | null): string {
-  switch (m) {
-    case 'kitchener':
-      return 'Kitchener';
-    case 'waterloo':
-      return 'Waterloo';
-    case 'cambridge':
-      return 'Cambridge';
-    case 'elsewhere':
-      return 'Ontario';
-    default:
-      return 'Waterloo Region';
-  }
+// The shortest place name we know: the city, else the province, else Canada.
+export function placeLabel(profile: Pick<Profile, 'province' | 'city'>): string {
+  return profile.city ?? provinceName(profile.province) ?? 'Canada';
+}
+
+export function placeLong(profile: Pick<Profile, 'province' | 'city'>): string {
+  const province = provinceName(profile.province);
+  if (profile.city && province) return `${profile.city}, ${province}`;
+  return province ?? 'Canada';
 }

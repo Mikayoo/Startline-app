@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { StepCard } from '@/components/StepCard';
 import { Chip, DemoNotice, Txt } from '@/components/ui';
-import { municipalityLabel, PlannedStep, RULES_VERSION } from '@/logic/plan';
+import { placeLabel, PlannedStep, RULES_VERSION } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, palette, radius, space } from '@/theme/tokens';
 
@@ -18,7 +18,7 @@ const STAGES: { id: PlannedStep['stage']; title: string; helper: string }[] = [
 export default function Path() {
   const insets = useSafeAreaInsets();
   const { plan, profile, done } = useApp();
-  const place = municipalityLabel(profile.municipality);
+  const place = placeLabel(profile);
   const total = plan.steps.length;
   const finished = plan.steps.filter((s) => done.has(s.step.id)).length;
 

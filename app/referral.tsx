@@ -9,7 +9,7 @@ import { FooterButton, StickyFooter } from '@/components/layout';
 import { Card, Chip, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
 import { PRIORITY_OPTIONS } from '@/content/steps';
 import { formatPhone, isValidEmail, isValidPhone, phoneDigits } from '@/logic/account';
-import { municipalityLabel } from '@/logic/plan';
+import { placeLong } from '@/logic/plan';
 import { useApp } from '@/state/AppState';
 import { color, font, palette, radius, space } from '@/theme/tokens';
 
@@ -34,7 +34,7 @@ export default function Referral() {
   const shared: [string, string][] = [
     ['First name', firstName || 'Not given'],
     [contactBy === 'phone' ? 'Phone' : 'Email', contact],
-    ['City', municipalityLabel(profile.municipality)],
+    ['Area', placeLong(profile)],
     ['Language', profile.language === 'en' ? 'English' : profile.language],
     ['Wants help with', topics.length ? topics.join(', ') : 'Not specified'],
   ];

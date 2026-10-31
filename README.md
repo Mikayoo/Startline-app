@@ -1,8 +1,8 @@
 # Startline
 
-A settlement app for refugees and refugee claimants in Kitchener-Waterloo, Ontario. This is the working prototype of the version 1 core loop:
+A settlement app for refugees and refugee claimants anywhere in Canada, with sample local services for Kitchener-Waterloo, Ontario. This is the working prototype of the version 1 core loop:
 
-1. **Onboarding:** splash, language, then 4 questions: status (optional), city, household (optional) and up to 3 priorities.
+1. **Onboarding:** a short story splash, language, then 4 questions (situation, province and city, household, up to 3 priorities) and a Review screen.
 2. **Plan:** fixed, versioned rules turn the answers into ordered steps grouped as Now, Soon and Later.
 3. **Step detail:** plain-language actions, who the step is for, what to prepare, and its official sources.
 4. **Ask Startline:** answers only from the source register, with citations. Urgent and personal questions go to a person.

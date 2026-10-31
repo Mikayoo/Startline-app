@@ -6,7 +6,8 @@ import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
 export default function TabsLayout() {
-  const { introSeen, account, unlocked } = useApp();
+  const { introSeen, splashSeen, account, unlocked } = useApp();
+  if (!splashSeen) return <Redirect href="/splash" />;
   if (!introSeen) return <Redirect href="/intro" />;
   if (account && !unlocked) return <Redirect href="/account/unlock" />;
   return (

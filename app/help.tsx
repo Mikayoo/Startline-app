@@ -13,7 +13,7 @@ import { color, palette, radius, space } from '@/theme/tokens';
 const START: { icon: IconName; title: string; sub: string; onPress: () => void }[] = [
   { icon: 'search', title: 'Find a service', sub: 'Housing, food, health and legal support', onPress: () => router.push('/(tabs)/resources') },
   { icon: 'users', title: 'Talk to someone', sub: 'Ask a settlement worker to contact you', onPress: () => router.push('/referral') },
-  { icon: 'map-pin', title: 'Choose a city', sub: 'No need to share your exact location', onPress: () => router.push('/onboarding/place?edit=1') },
+  { icon: 'map-pin', title: 'Choose a city', sub: 'No need to share your exact location', onPress: () => router.push('/onboarding/place?from=review') },
 ];
 
 // v3.1 "26 Help today".
@@ -67,7 +67,7 @@ export default function Help() {
             points={['Emergency: call 911', 'Mental health crisis: call or text 988', 'Community and social services: call 211']}
             onPointPress={(i) => Linking.openURL(['tel:911', 'tel:988', 'tel:211'][i])}
           />
-          <InfoCard icon="home" title="Need a place to stay tonight?" text="Call 211 and ask about emergency shelter in Waterloo Region." />
+          <InfoCard icon="home" title="Need a place to stay tonight?" text="Call or text 2-1-1 and ask about emergency shelter where you are." />
           <InfoCard icon="heart" title="You're not alone" text="Settlement workers and community navigators help people in your situation every day." />
           <Txt variant="label" style={{ color: color.textSecondary, marginTop: space[2] }}>
             WHAT TO SAY WHEN YOU CALL
@@ -75,7 +75,7 @@ export default function Help() {
           <InfoCard
             icon="message-square"
             title="A simple way to start"
-            text={'"Hello, I\'m a refugee claimant in Kitchener. I have a question about my situation. Can you help, or tell me who can?"'}
+            text={'"Hello, I\'m new to Canada. I have a question about my situation. Can you help, or tell me who can?"'}
           />
           <InfoCard icon="briefcase" title="Free legal help" sub="If you qualify" pointIcon="arrow-right" points={['Legal Aid Ontario', 'A community legal clinic', 'Your lawyer or representative, if you have one']} />
           <DemoNotice text="Requests are in demo mode. No message is sent until a partner agency agrees to the pilot." />

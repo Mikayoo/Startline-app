@@ -1,48 +1,48 @@
-import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 
-import { FooterButton, QuestionScreen } from '@/components/layout';
-import { OptionCard } from '@/components/ui';
+import { FooterButton, LockNote, QuestionScreen, useNext } from '@/components/layout';
+import { OptionCard, Txt } from '@/components/ui';
 import { HOUSEHOLD_OPTIONS } from '@/content/steps';
 import { useApp } from '@/state/AppState';
-import { space } from '@/theme/tokens';
+import { color, space } from '@/theme/tokens';
 
+// "v3.1 / OB05 Household": "Just me", or everyone who is with you.
 export default function Household() {
-  // Opened from Profile with ?edit=1: save and go back instead of continuing.
-  const { edit } = useLocalSearchParams<{ edit?: string }>();
-  const go = (href: Parameters<typeof router.push>[0]) => (edit ? router.back() : router.push(href));
-  const { profile, update } = useApp();
+  const { profile, update, toggleHousehold } = useApp();
+  const next = useNext('/onboarding/priorities');
+  const members = profile.household;
   return (
     <QuestionScreen
       step={3}
       total={4}
-      title="Who is with you in Canada?"
-      helper="This helps us add steps like school registration. We don't ask for names."
-      footer={
-        <>
-          <FooterButton label="Continue" arrow hint="Choose one to continue, or skip this question." disabled={!profile.household} onPress={() => go('/onboarding/priorities')} />
-          <FooterButton
-            tone="ghost"
-            label="Skip this question"
-            onPress={() => {
-              update({ household: null });
-              go('/onboarding/priorities');
-            }}
-          />
-        </>
-      }
+      title="Who's settling with you?"
+      helper="This helps us show school, childcare, benefits and family housing steps."
+      footer={<FooterButton label="Continue" arrow hint="Choose Just me, or who is with you." disabled={members === null} onPress={next} style={{ minHeight: 56 }} />}
     >
+      <OptionCard
+        icon="user"
+        title="Just me"
+        helper="Settling on my own"
+        selected={members !== null && members.length === 0}
+        onPress={() => update({ household: [] })}
+      />
+      <Txt variant="label" style={{ color: color.textSecondary, letterSpacing: 0.4, marginTop: space[2] }}>
+        OR EVERYONE WHO'S WITH YOU
+      </Txt>
       <View style={{ gap: space[3] }}>
         {HOUSEHOLD_OPTIONS.map((h) => (
           <OptionCard
             key={h.id}
+            multi
             icon={h.icon as never}
             title={h.label}
-            selected={profile.household === h.id}
-            onPress={() => update({ household: h.id })}
+            helper={h.helper}
+            selected={!!members?.includes(h.id)}
+            onPress={() => toggleHousehold(h.id)}
           />
         ))}
       </View>
+      <LockNote>You can change this anytime in Profile.</LockNote>
     </QuestionScreen>
   );
 }

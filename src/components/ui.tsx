@@ -165,8 +165,8 @@ export function OptionCard({
       style={({ pressed }) => [styles.option, selected && styles.optionSelected, pressed && { opacity: 0.9 }]}
     >
       {icon ? (
-        <View style={[styles.optionIcon, selected && { backgroundColor: color.actionPrimary }]}>
-          <Feather name={icon} size={20} color={selected ? palette.white : color.textBrand} />
+        <View style={[styles.optionIcon, selected && { backgroundColor: palette.white }]}>
+          <Feather name={icon} size={20} color={color.textBrand} />
         </View>
       ) : null}
       <View style={{ flex: 1 }}>
@@ -178,7 +178,7 @@ export function OptionCard({
         ) : null}
       </View>
       <View style={[multi ? styles.check : styles.radio, selected && styles.markOn]}>
-        {selected ? <Feather name="check" size={14} color={palette.white} /> : null}
+        {selected ? multi ? <Feather name="check" size={14} color={palette.white} /> : <View style={styles.radioDot} /> : null}
       </View>
     </Pressable>
   );
@@ -272,12 +272,14 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space[3],
-    padding: space[4],
+    gap: 14,
+    paddingVertical: 14,
+    paddingHorizontal: space[4],
     borderRadius: radius.card,
     backgroundColor: color.surface,
     borderWidth: 1.5,
-    borderColor: color.borderSubtle,
+    borderColor: 'transparent',
+    ...shadow.card,
   },
   optionSelected: {
     borderColor: color.actionPrimary,
@@ -286,7 +288,7 @@ const styles = StyleSheet.create({
   optionIcon: {
     width: 44,
     height: 44,
-    borderRadius: radius.md,
+    borderRadius: 14,
     backgroundColor: color.brandSubtle,
     alignItems: 'center',
     justifyContent: 'center',
@@ -303,12 +305,13 @@ const styles = StyleSheet.create({
   check: {
     width: 24,
     height: 24,
-    borderRadius: 7,
+    borderRadius: radius.sm,
     borderWidth: 1.5,
     borderColor: color.borderDefault,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: palette.white },
   markOn: {
     backgroundColor: color.actionPrimary,
     borderColor: color.actionPrimary,
