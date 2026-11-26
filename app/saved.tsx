@@ -4,9 +4,10 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card, DemoNotice, IconButton, PillButton, Txt } from '@/components/ui';
+import { ServiceLogo } from '@/components/ServiceLogo';
 import { SERVICES } from '@/content/services';
 import { useApp } from '@/state/AppState';
-import { color, radius, space } from '@/theme/tokens';
+import { color, space } from '@/theme/tokens';
 
 // v3.1 "50 Saved contacts".
 export default function Saved() {
@@ -25,11 +26,7 @@ export default function Saved() {
       <Txt style={{ color: color.textSecondary }}>Saving a contact doesn't book an appointment or contact the service.</Txt>
       {list.map((s) => (
         <Card key={s.id} onPress={() => router.push(`/service/${s.id}`)} style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
-          <View style={{ minWidth: 44, paddingHorizontal: 6, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' }}>
-            <Txt variant="label" style={{ color: color.textBrand }}>
-              {s.short}
-            </Txt>
-          </View>
+          <ServiceLogo service={s} />
           <View style={{ flex: 1 }}>
             <Txt variant="cardTitle">{s.name}</Txt>
             <Txt variant="caption" style={{ color: color.textSecondary }}>

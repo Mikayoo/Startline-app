@@ -17,6 +17,8 @@ export interface Service {
   url?: string;
   sourceId?: string;
   photo: number;
+  // The organization's own logo mark (square). Used only to identify them.
+  logo?: number;
   howItHelps: string;
   goodToKnow: { title: string; text: string }[];
   // Only shown to people who live here. No area means anywhere in Canada.
@@ -28,6 +30,7 @@ const WATERLOO_REGION = ['Kitchener', 'Waterloo', 'Cambridge'];
 export const SERVICES: Service[] = [
   {
     id: '211-canada',
+    logo: require('../../assets/images/logos/211.png'),
     name: '211',
     short: '211',
     subtitle: 'Community and social services near you',
@@ -48,6 +51,7 @@ export const SERVICES: Service[] = [
   {
     area: { province: 'ON' },
     id: '211-ontario',
+    logo: require('../../assets/images/logos/211.png'),
     name: '211 Ontario',
     short: '211',
     subtitle: 'Community services and referrals',
@@ -69,6 +73,7 @@ export const SERVICES: Service[] = [
   {
     area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'kpl',
+    logo: require('../../assets/images/logos/kpl.png'),
     name: 'Kitchener Public Library',
     short: 'KPL',
     subtitle: 'Settlement workers · Free',
@@ -88,6 +93,7 @@ export const SERVICES: Service[] = [
   {
     area: { province: 'ON' },
     id: 'legal-aid',
+    logo: require('../../assets/images/logos/legal-aid-ontario.png'),
     name: 'Legal Aid Ontario',
     short: 'LAO',
     subtitle: 'Refugee and immigration law',
@@ -107,6 +113,7 @@ export const SERVICES: Service[] = [
   {
     area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'kwmc',
+    logo: require('../../assets/images/logos/kwmc.png'),
     name: 'KW Multicultural Centre',
     short: 'KWMC',
     subtitle: 'Settlement and interpretation',
@@ -124,6 +131,7 @@ export const SERVICES: Service[] = [
   {
     area: { province: 'ON', cities: WATERLOO_REGION },
     id: 'reception-house',
+    logo: require('../../assets/images/logos/reception-house.png'),
     name: 'Reception House Waterloo Region',
     short: 'RH',
     subtitle: 'Support for refugees',

@@ -15,12 +15,13 @@ export default function PlanReady() {
   const insets = useSafeAreaInsets();
   const { plan, profile, done, saved } = useApp();
   const now = plan.steps.filter((s) => s.stage === 'now');
+  const waiting = plan.steps.filter((s) => s.stage !== 'now');
   const place = placeLabel(profile);
   const first = now[0];
 
   return (
     <View style={{ flex: 1, backgroundColor: color.surfaceWarm }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 180 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 72 + insets.bottom + space[8] }}>
         <PhotoHero height={300 + insets.top} colors={[palette.teal900, palette.deep]}>
           <Image source={require('../../assets/images/ob08-hero.jpg')} style={StyleSheet.absoluteFill} contentFit="cover" accessible={false} />
           <LinearGradient
@@ -55,8 +56,18 @@ export default function PlanReady() {
           {!plan.localSamples ? (
             <DemoNotice text="Local agencies in the prototype are samples from Waterloo Region. Your steps link to national and provincial sources instead." />
           ) : null}
+          {waiting.length ? (
+            <>
+              <SectionHeader title="Waiting in My Path" />
+              <View style={{ gap: space[3] }}>
+                {waiting.map((item) => (
+                  <StepCard key={item.step.id} item={item} index={plan.steps.indexOf(item)} done={done.has(item.step.id)} place={place} />
+                ))}
+              </View>
+            </>
+          ) : null}
           <Txt variant="caption" style={{ color: color.textSecondary }}>
-            {plan.steps.length - now.length} more steps are waiting in My Path. Saving keeps your plan on this phone only.
+            {saved ? 'Your plan is saved on this phone only.' : 'Saving keeps your plan on this phone only.'}
           </Txt>
         </View>
       </ScrollView>
