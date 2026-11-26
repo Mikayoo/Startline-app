@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -66,7 +66,7 @@ export default function Home() {
           <Txt style={{ color: color.textSecondary, flex: 1 }}>Search services and support</Txt>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Ask Startline" onPress={() => router.push('/(tabs)/ask')} style={styles.askButton}>
-          <Feather name="zap" size={20} color={palette.white} />
+          <MaterialCommunityIcons name="creation" size={22} color={palette.white} />
         </Pressable>
       </View>
 

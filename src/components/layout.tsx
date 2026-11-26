@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/tabs';
@@ -151,7 +151,6 @@ export function FooterButton({ hint, ...props }: Parameters<typeof PillButton>[0
 const TAB_ICON: Record<string, IconName> = {
   index: 'home',
   path: 'map',
-  ask: 'message-square',
   resources: 'book-open',
   profile: 'user',
 };
@@ -185,7 +184,11 @@ export function PillTabBar({ state, emitter, navigateToTab }: BottomTabBarProps)
               }}
               style={[styles.tab, focused && styles.tabActive]}
             >
-              <Feather name={TAB_ICON[name] ?? 'circle'} size={20} color={focused ? palette.white : palette.navInactive} />
+              {name === 'ask' ? (
+                <MaterialCommunityIcons name="creation-outline" size={24} color={focused ? palette.white : palette.navInactive} />
+              ) : (
+                <Feather name={TAB_ICON[name] ?? 'circle'} size={24} color={focused ? palette.white : palette.navInactive} />
+              )}
               <Txt variant="label" numberOfLines={1} style={{ color: focused ? palette.white : color.textSecondary, fontSize: 10 }}>
                 {TAB_LABEL[name] ?? name}
               </Txt>

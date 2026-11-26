@@ -13,14 +13,12 @@ const ACCOUNT_KEY = 'startline.account.v1';
 
 // Prototype account. There is no server yet: the account lives on this phone
 // only, codes are not really sent, and the passcode is stored as a hash.
-export type DocumentKind = 'claimant' | 'passport';
 export interface Account {
   name?: string;
   contact: { kind: 'phone' | 'email'; value: string };
   passcodeHash: string;
   faceId: boolean;
   birth?: { day: string; month: string; year: string };
-  documents: DocumentKind[];
   createdAt: string;
 }
 export type AccountDraft = Partial<Account> & { pendingPasscode?: string };
@@ -232,7 +230,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       passcodeHash: draft.passcodeHash,
       faceId: !!draft.faceId,
       birth: draft.birth,
-      documents: account?.documents ?? [],
       createdAt: account?.createdAt ?? new Date().toISOString(),
     };
     await AsyncStorage.setItem(ACCOUNT_KEY, JSON.stringify(next));

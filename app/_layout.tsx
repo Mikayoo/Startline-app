@@ -26,7 +26,6 @@ function Navigator() {
       <Stack.Screen name="referral" options={{ presentation: 'modal' }} />
       <Stack.Screen name="account/unlock" options={{ gestureEnabled: false, animation: 'fade' }} />
       <Stack.Screen name="account/ready" options={{ gestureEnabled: false }} />
-      <Stack.Screen name="account/document-saved" options={{ gestureEnabled: false }} />
     </Stack>
   );
 }
