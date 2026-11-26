@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SourceCard, STEP_ICON, StickyFooter } from '@/components/layout';
@@ -85,6 +85,14 @@ export default function StepDetail() {
             </Section>
           ) : null}
 
+          <Pressable accessibilityRole="button" onPress={() => router.push(`/docs?step=${step.id}`)} style={({ pressed }) => [styles.docsRow, pressed && { opacity: 0.85 }]}>
+            <Feather name="file-text" size={18} color={color.textBrand} />
+            <Txt variant="label" style={{ flex: 1 }}>
+              Documents you may need for this step
+            </Txt>
+            <Feather name="chevron-right" size={18} color={color.textSecondary} />
+          </Pressable>
+
           <Section title="What to do">
             {step.actions.map((a, i) => (
               <View key={a} style={styles.bulletRow}>
@@ -163,6 +171,7 @@ const styles = StyleSheet.create({
     gap: space[5],
   },
   why: { flexDirection: 'row', gap: space[2], padding: space[3], borderRadius: radius.md, backgroundColor: color.brandSubtle },
+  docsRow: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[3], borderRadius: radius.lg, backgroundColor: color.surface, borderWidth: 1, borderColor: color.borderSubtle },
   bulletRow: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
   num: { width: 24, height: 24, borderRadius: 12, backgroundColor: color.actionPrimary, alignItems: 'center', justifyContent: 'center' },
 });

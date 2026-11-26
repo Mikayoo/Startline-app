@@ -7,7 +7,7 @@ import { DemoNotice, Txt } from '@/components/ui';
 import { useApp } from '@/state/AppState';
 import { color } from '@/theme/tokens';
 
-// v3.1 "OB10 Verify". Prototype: no text is sent, any 6 digits work.
+// v3.1 "OB10 Confirm your number". Account only, never an identity check. Prototype: no text is sent, any 6 digits work.
 export default function Verify() {
   const { flow = 'create' } = useLocalSearchParams<{ flow?: string }>();
   const { draft, account } = useApp();
@@ -18,8 +18,8 @@ export default function Verify() {
     <AccountScreen
       icon="smartphone"
       title="Enter the 6-digit code"
-      helper={`We sent it by text to ${maskContact(contact)}.`}
-      primary={{ label: 'Continue', disabled: code.length < 6, hint: 'Enter all 6 digits.', onPress: () => router.push(`/account/passcode?flow=${flow}&stage=create`) }}
+      helper={`We sent it by text to ${maskContact(contact)}. This only confirms your number so you can sign in. It isn’t an identity or status check.`}
+      primary={{ label: 'Confirm', disabled: code.length < 6, hint: 'Enter all 6 digits.', onPress: () => router.push(`/account/passcode?flow=${flow}&stage=create`) }}
     >
       <CodeInput value={code} onChange={setCode} />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

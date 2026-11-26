@@ -43,13 +43,6 @@ export default function Privacy() {
                 {maskContact(account.contact)} · {account.faceId ? 'Face ID on' : 'Passcode only'}
               </Txt>
             </View>
-            <View style={{ gap: 2 }}>
-              <Txt variant="label">Documents</Txt>
-              <Txt variant="caption" style={{ color: color.textSecondary }}>
-                {account.documents.length ? `${account.documents.length} saved on this phone` : 'None added. Only asked when a step needs it.'}
-              </Txt>
-            </View>
-            <PillButton tone="secondary" label="Add a document" onPress={() => router.push('/account/documents')} />
             <PillButton tone="ghost" label="Sign out on this phone" onPress={() => signOut()} />
           </>
         ) : (
@@ -76,7 +69,7 @@ export default function Privacy() {
           </View>
         ))}
         <Txt variant="caption" style={{ color: color.textSecondary }}>
-          Startline never asks for your address or your case number. Your name and documents are optional, and stay on this phone.
+          Startline never asks for your address or your case number. Your name is optional and stays on this phone. Document photos and the details read from them are used once, then deleted, and never kept.
         </Txt>
       </Card>
       <PillButton

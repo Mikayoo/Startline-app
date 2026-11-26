@@ -4,10 +4,10 @@ A settlement app for refugees and refugee claimants anywhere in Canada, with sam
 
 1. **Onboarding:** a short story splash, language, then 4 questions (situation, province and city, household, up to 3 priorities) and a Review screen.
 2. **Plan:** fixed, versioned rules turn the answers into ordered steps grouped as Now, Soon and Later.
-3. **Step detail:** plain-language actions, who the step is for, what to prepare, and its official sources.
+3. **Step detail:** plain-language actions, who the step is for, what to prepare, and its official sources. "Documents you may need" explains which documents may help for that step, with an optional photo check.
 4. **Ask Startline:** answers only from the source register, with citations. Urgent and personal questions go to a person.
 5. **Help today:** urgent lines (911, 988, 211) and a referral request with a preview of exactly what would be shared and explicit consent, in demo mode.
-6. **Account (prototype):** save your plan with a phone number or email, a 6-digit passcode, optional Face ID, name and date of birth. The app locks on launch, and "Forgot passcode" resets it. Documents can be added from Your information.
+6. **Account (prototype):** save your plan with a phone number or email, a 6-digit passcode, optional Face ID, name and date of birth. The app locks on launch, and "Forgot passcode" resets it. An account is only needed to save a plan; browsing never needs one.
 7. **Resources and Profile:** sample local services with detail pages you can save, your details with Change buttons, saved support and My dates (add, list and remove your own dates).
 
 The design comes from the v3.1 screens in Figma (`TiHKqEUApUi1FNNtRGzAC7`, pages "Onboarding v3" and "App v3.1").
@@ -26,6 +26,7 @@ Before a real launch, work through [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md).
 | Languages | English only. Arabic and the third pilot language need reviewed translations. |
 | Storage | In memory by default; saved on the device only when the user saves their plan. "Delete my data" removes everything. |
 | Accounts | On this phone only. There is no server, codes and emails are not sent (any 6 digits work), and the passcode is stored as a SHA-256 hash. The document camera is not connected yet. |
+| Documents | Asked only inside a step, never required. Photos and the details read from them are used once, then dropped. Nothing is kept on the phone or in an account. |
 
 Do not use this build with real participants until the partner, content and privacy gates in the development handoff are passed.
 
@@ -57,13 +58,16 @@ app/                     Screens (expo-router)
   referral.tsx           Referral preview and consent (demo)
   privacy.tsx            Your information: account, documents, save and delete
   account/               Save plan, verify, passcode, Face ID, name, birthday, ready,
-                         log in, unlock, reset, documents, scan
+                         log in, unlock, reset
+  docs/                  Documents you may need, where you're from (optional), photo,
+                         scan, preview, check the details
 src/
   theme/tokens.ts        v3.1 colours, type, spacing (mirrors Figma variables)
   components/            Pill button, option card, chips, tab bar, step card
   content/sources.ts     Source register: one record per official page
   content/steps.ts       Step library and onboarding options
   content/services.ts    Sample local services for Resources
+  content/documents.ts   Sample document guidance for steps
   content/photos.ts      Photos from the v3.1 Figma file
   logic/plan.ts          Plan rules (RULES_VERSION)
   logic/answer.ts        Retrieval, citations, urgent and personal routing

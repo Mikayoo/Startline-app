@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -41,7 +41,7 @@ export default function Ask() {
       <ScrollView ref={scroll} contentContainerStyle={{ paddingTop: insets.top + space[3], paddingHorizontal: space[6], paddingBottom: 220, gap: space[4] }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
           <View style={styles.avatar}>
-            <Feather name="zap" size={20} color={palette.white} />
+            <MaterialCommunityIcons name="creation" size={22} color={palette.white} />
           </View>
           <View>
             <Txt variant="screenHeading" accessibilityRole="header">

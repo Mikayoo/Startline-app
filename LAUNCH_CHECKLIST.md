@@ -16,7 +16,9 @@ What has to be true before Startline is used by real people or sent to the App S
 - [ ] Backend with real phone and email codes, accounts and saved plans stored in Canada.
 - [ ] Ask Startline answer service on the server: same retrieval and safety routing, then a model phrases the answer. API key and spending cap on the server only.
 - [ ] Referral channel to the partner agency, approved by the privacy reviewer.
-- [ ] Real document camera, or remove documents from version 1.
+- [ ] Real document camera, or remove the photo option from version 1. Rules: process on the device, no upload or storage, keep images and their text out of analytics, logs and crash reports, clear temp files and caches on finish or cancel, exclude from backups, review third-party SDKs.
+- [ ] Document list per step confirmed with each provider (`src/content/documents.ts` is sample content).
+- [ ] Legal and privacy review of "never shared with any government, including your home country" on the Where are you from screen.
 - [ ] Remove every "Prototype", "Demo mode" and "Sample" label once the item behind it is real. Apple rejects demo apps.
 - [ ] Final app icon, bundle ID (replace `app.startline.prototype`) and version.
 - [ ] Accessibility pass: VoiceOver and TalkBack, larger text, contrast, reduced motion.

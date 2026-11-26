@@ -1,16 +1,15 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Chip, IconButton, Txt } from '@/components/ui';
 import { palette, radius, space } from '@/theme/tokens';
 
-// v3.1 "A14 Scan document". Prototype: the camera isn't connected yet, so
-// the shutter goes straight to the saved state.
+// v3.1 "56 Scan document". Prototype: the camera isn't connected yet, so the
+// shutter goes straight to the preview.
 export default function Scan() {
-  const { doc = 'claimant' } = useLocalSearchParams<{ doc?: string }>();
   const insets = useSafeAreaInsets();
-  const capture = () => router.replace(`/account/document-saved?doc=${doc}`);
+  const capture = () => router.replace('/docs/preview');
   return (
     <View style={styles.root}>
       <View style={{ paddingTop: insets.top + space[2], paddingHorizontal: space[5] }}>
