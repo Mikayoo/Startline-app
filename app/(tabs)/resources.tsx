@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native
 
 import { PhotoHeader, sheetStyle } from '@/components/PhotoHeader';
 import { Card, Chip, DemoNotice, SectionHeader, Txt } from '@/components/ui';
+import { ServiceLogo } from '@/components/ServiceLogo';
 import { PHOTO } from '@/content/photos';
 import { Service, SERVICE_TOPICS, servicesHere } from '@/content/services';
 import { placeLabel } from '@/logic/plan';
@@ -83,11 +84,7 @@ export default function Resources() {
         {list.slice(1).map((s) => (
           <Card key={s.id} onPress={() => router.push(`/service/${s.id}`)} accessibilityLabel={`${s.name}. ${s.subtitle}`} style={{ gap: space[2] }}>
             <View style={{ flexDirection: 'row', gap: space[3], alignItems: 'center' }}>
-              <View style={styles.badge}>
-                <Txt variant="label" style={{ color: color.textBrand }}>
-                  {s.short}
-                </Txt>
-              </View>
+              <ServiceLogo service={s} />
               <View style={{ flex: 1 }}>
                 <Txt variant="cardTitle">{s.name}</Txt>
                 <Txt variant="caption" style={{ color: color.textSecondary }}>
@@ -126,5 +123,4 @@ const styles = StyleSheet.create({
   topicOn: { backgroundColor: color.actionPrimary },
   featured: { backgroundColor: color.surface, borderRadius: radius.card, overflow: 'hidden', ...shadow.card },
   featuredPhoto: { width: '100%', height: 170 },
-  badge: { minWidth: 44, paddingHorizontal: 6, height: 44, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },
 });
