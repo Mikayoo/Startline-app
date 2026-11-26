@@ -1,9 +1,11 @@
 import { Feather } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Avatar } from '@/components/Avatar';
 import { Card, Chip, IconName, Txt } from '@/components/ui';
 import { HOUSEHOLD_OPTIONS } from '@/content/steps';
 import { placeLabel, placeLong } from '@/logic/plan';
@@ -62,7 +64,13 @@ function Row({ icon, label, value, onPress, action = 'chevron' }: { icon: IconNa
 // v3.1 "17 Profile".
 export default function Profile() {
   const insets = useSafeAreaInsets();
-  const { profile, account, savedServices } = useApp();
+  const { profile, account, savedServices, photo, setPhoto } = useApp();
+
+  // Optional. The photo stays on this phone and is only shown to the person.
+  const choosePhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.5 });
+    if (!result.canceled && result.assets[0]) setPhoto(result.assets[0].uri);
+  };
   const status = profile.status ? STATUS_SHORT[profile.status] : undefined;
   const household =
     profile.household === null ? null : profile.household.length === 0 ? 'Just me' : profile.household.map((m) => HOUSEHOLD_OPTIONS.find((h) => h.id === m)?.label).join(', ');
@@ -72,14 +80,25 @@ export default function Profile() {
   return (
     <ScrollView style={{ backgroundColor: color.surfaceWarm }} contentContainerStyle={{ paddingBottom: 130 }}>
       <LinearGradient colors={[palette.teal700, palette.teal900, palette.deep]} style={{ paddingTop: insets.top + space[8], paddingHorizontal: space[6], paddingBottom: 56, gap: space[3] }}>
-        <View style={styles.avatar}>
-          {account?.name ? (
-            <Txt variant="screenHeading" style={{ color: palette.white }}>
-              {account.name.slice(0, 1).toUpperCase()}
-            </Txt>
-          ) : (
-            <Feather name="user" size={28} color={palette.white} />
-          )}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: space[3] }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={photo ? 'Change your profile photo' : 'Add a profile photo'}
+            onPress={choosePhoto}
+            style={{ width: 72, height: 72 }}
+          >
+            <Avatar photo={photo} name={account?.name} size={72} onDark />
+            <View style={styles.cameraBadge}>
+              <Feather name="camera" size={14} color={color.textBrand} />
+            </View>
+          </Pressable>
+          {photo ? (
+            <Pressable accessibilityRole="button" onPress={() => setPhoto(null)} hitSlop={8} style={{ paddingBottom: space[1] }}>
+              <Txt variant="label" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                Remove photo
+              </Txt>
+            </Pressable>
+          ) : null}
         </View>
         <Txt variant="display" style={{ color: palette.white }} accessibilityRole="header">
           {account?.name ?? 'Your profile'}
@@ -121,7 +140,7 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  avatar: { width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.16)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)', alignItems: 'center', justifyContent: 'center' },
+  cameraBadge: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, backgroundColor: palette.white, alignItems: 'center', justifyContent: 'center' },
   sheet: { marginTop: -28, borderTopLeftRadius: radius.sheet, borderTopRightRadius: radius.sheet, backgroundColor: color.surfaceWarm, padding: space[6], gap: space[4] },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[3], paddingVertical: space[3] },
   rowIcon: { width: 40, height: 40, borderRadius: radius.md, backgroundColor: color.brandSubtle, alignItems: 'center', justifyContent: 'center' },

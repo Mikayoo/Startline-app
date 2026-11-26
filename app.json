@@ -33,6 +33,13 @@
         {
           "faceIDPermission": "Startline uses Face ID to unlock your plan on this phone."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Startline lets you choose a profile photo. It stays on this phone.",
+          "cameraPermission": false
+        }
       ]
     ],
     "experiments": {

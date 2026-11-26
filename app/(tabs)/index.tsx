@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card, Chip, DemoNotice, IconButton, IconName, PillButton, SectionHeader, Txt } from '@/components/ui';
+import { Avatar } from '@/components/Avatar';
 import { PHOTO, stepPhoto } from '@/content/photos';
 import { getSource } from '@/content/sources';
 import { daysUntil, formatDate, whenLabel } from '@/logic/dates';
@@ -27,7 +28,7 @@ function greeting() {
 // v3.1 "09 Home".
 export default function Home() {
   const insets = useSafeAreaInsets();
-  const { plan, profile, done, account, saved, dates } = useApp();
+  const { plan, profile, done, account, saved, dates, photo } = useApp();
   const nextDate = dates.find((d) => daysUntil(d.date) >= 0);
   const place = placeLabel(profile);
   const hasAnswers = profile.priorities.length > 0;
@@ -40,15 +41,9 @@ export default function Home() {
   return (
     <ScrollView style={{ backgroundColor: color.surfaceWarm }} contentContainerStyle={{ paddingTop: insets.top + space[3], paddingBottom: 130, gap: space[5] }}>
       <View style={[styles.pad, styles.header]}>
-        <View style={styles.avatar} accessible={false}>
-          {name ? (
-            <Txt variant="cardTitle" style={{ color: palette.white }}>
-              {name.slice(0, 1).toUpperCase()}
-            </Txt>
-          ) : (
-            <Feather name="user" size={20} color={palette.white} />
-          )}
-        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Your profile" onPress={() => router.push('/(tabs)/profile')} hitSlop={6}>
+          <Avatar photo={photo} name={name} />
+        </Pressable>
         <View style={{ flex: 1 }}>
           <Txt variant="caption" style={{ color: color.textSecondary }}>
             {name ? `${greeting()}, ${name}` : `${greeting()} · ${place}`}
@@ -228,7 +223,6 @@ export default function Home() {
 const styles = StyleSheet.create({
   pad: { paddingHorizontal: space[6] },
   header: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: palette.teal700, alignItems: 'center', justifyContent: 'center' },
   search: {
     flex: 1,
     flexDirection: 'row',

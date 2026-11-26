@@ -10,6 +10,9 @@ import { buildPlan, MAX_PRIORITIES, Plan, Profile } from '@/logic/plan';
 
 const STORAGE_KEY = 'startline.savedPlan.v1';
 const ACCOUNT_KEY = 'startline.account.v1';
+// Optional profile photo. Like the plan, it is only written to this phone
+// once the plan is saved, and "Delete my data" removes it.
+const PHOTO_KEY = 'startline.photo.v1';
 
 // Prototype account. There is no server yet: the account lives on this phone
 // only, codes are not really sent, and the passcode is stored as a hash.
@@ -79,6 +82,8 @@ interface AppState {
   updateAccount: (patch: Partial<Account>) => Promise<void>;
   unlock: () => void;
   signOut: () => Promise<void>;
+  photo: string | null;
+  setPhoto: (uri: string | null) => void;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -95,10 +100,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<Account | null>(null);
   const [draft, setDraftState] = useState<AccountDraft>({});
   const [unlocked, setUnlocked] = useState(false);
+  const [photo, setPhotoState] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([AsyncStorage.getItem(STORAGE_KEY), AsyncStorage.getItem(ACCOUNT_KEY)])
-      .then(([raw, rawAccount]) => {
+    Promise.all([AsyncStorage.getItem(STORAGE_KEY), AsyncStorage.getItem(ACCOUNT_KEY), AsyncStorage.getItem(PHOTO_KEY)])
+      .then(([raw, rawAccount, rawPhoto]) => {
+        if (rawPhoto) setPhotoState(rawPhoto);
         if (raw) {
           const data = JSON.parse(raw) as Saved;
           // plans saved before v3.1 stored one household value
@@ -169,8 +176,17 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const savePlan = useCallback(async () => {
     await persist(profile, done, savedServices);
+    if (photo) await AsyncStorage.setItem(PHOTO_KEY, photo);
     setSaved(true);
-  }, [persist, profile, done, savedServices]);
+  }, [persist, profile, done, savedServices, photo]);
+
+  const setPhoto = useCallback(
+    (uri: string | null) => {
+      setPhotoState(uri);
+      if (saved || account) (uri ? AsyncStorage.setItem(PHOTO_KEY, uri) : AsyncStorage.removeItem(PHOTO_KEY)).catch(() => {});
+    },
+    [saved, account],
+  );
 
   const toggleService = useCallback(
     (id: string) => {
@@ -186,7 +202,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   );
 
   const deleteData = useCallback(async () => {
-    await AsyncStorage.multiRemove([STORAGE_KEY, ACCOUNT_KEY]);
+    await AsyncStorage.multiRemove([STORAGE_KEY, ACCOUNT_KEY, PHOTO_KEY]);
+    setPhotoState(null);
     setProfile(emptyProfile);
     setDone(new Set());
     setSavedServices(new Set());
@@ -234,12 +251,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     };
     await AsyncStorage.setItem(ACCOUNT_KEY, JSON.stringify(next));
     await persist(profile, done, savedServices);
+    if (photo) await AsyncStorage.setItem(PHOTO_KEY, photo);
     setAccount(next);
     setSaved(true);
     setUnlocked(true);
     setIntroSeen(true);
     setDraftState({});
-  }, [draft, account, persist, profile, done, savedServices]);
+  }, [draft, account, persist, profile, done, savedServices, photo]);
 
   const updateAccount = useCallback(
     async (patch: Partial<Account>) => {
@@ -262,11 +280,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppState>(
     () => ({
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleHousehold, splashSeen, markSplashSeen, toggleDone, savePlan, deleteData,
-      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut, photo, setPhoto,
     }),
     [
       profile, plan, done, saved, ready, introSeen, markIntroSeen, update, togglePriority, toggleHousehold, splashSeen, markSplashSeen, toggleDone, savePlan, deleteData,
-      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut,
+      savedServices, toggleService, dates, addDate, removeDate, account, draft, unlocked, setDraft, commitAccount, updateAccount, unlock, signOut, photo, setPhoto,
     ],
   );
 
