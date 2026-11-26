@@ -15,6 +15,7 @@ const STORED: [string, string][] = [
   ['Status', 'Optional. To show steps that depend on it'],
   ['Priorities', 'To order your plan'],
   ['Steps you finished', 'To track your progress'],
+  ['Profile photo', 'Optional. Only shown to you, and kept on this phone'],
 ];
 
 export default function Privacy() {
