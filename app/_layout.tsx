@@ -7,12 +7,15 @@ import {
   useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppStateProvider, useApp } from '@/state/AppState';
 import { color, palette } from '@/theme/tokens';
+
+const FONT_WAIT_MS = 2500;
 
 function Navigator() {
   const { ready } = useApp();
@@ -31,14 +34,21 @@ function Navigator() {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loaded, fontError] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
   });
-  if (!loaded) return <View style={{ flex: 1, backgroundColor: color.surfaceWarm }} />;
+  // Never block on the brand font: on a slow connection (or if a font fails,
+  // as Safari's load check can), open with the system font after a short wait.
+  const [waited, setWaited] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setWaited(true), FONT_WAIT_MS);
+    return () => clearTimeout(t);
+  }, []);
+  if (!loaded && !fontError && !waited) return <View style={{ flex: 1, backgroundColor: color.surfaceWarm }} />;
   return (
     <SafeAreaProvider>
       <AppStateProvider>
